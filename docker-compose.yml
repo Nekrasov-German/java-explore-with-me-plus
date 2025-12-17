@@ -32,10 +32,10 @@ services:
 
   ewm-db:
     image: postgres:16.1
-    container_name: postgres-ewm-db
-    ports:
-      - "6542:5432"
-    environment:
-      - POSTGRES_PASSWORD=stat
-      - POSTGRES_USER=stat
-      - POSTGRES_DB=stats
+#    container_name: postgres-ewm-db
+#    ports:
+#      - "6542:5432"
+#    environment:
+#      - POSTGRES_PASSWORD=stat
+#      - POSTGRES_USER=stat
+#      - POSTGRES_DB=stats
