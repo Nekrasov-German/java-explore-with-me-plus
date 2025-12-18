@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table()                                  //----------------------------------------
+@Table(name = "stats")
 @Getter
 @Setter
 @ToString
@@ -21,8 +21,7 @@ public class EndpointHit {
     private String app;
     private String uri;
     private String ip;
-
-    LocalDateTime timeStamp;                //--------------------------------------
+    private LocalDateTime timestamp;
 
     @Override
     public boolean equals(Object o) {

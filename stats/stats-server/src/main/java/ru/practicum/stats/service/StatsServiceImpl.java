@@ -1,39 +1,41 @@
 package ru.practicum.stats.service;
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import request.StatHitRequestDto;
+import response.HitsCounterResponseDto;
 import ru.practicum.stats.dal.StatsRepository;
+import ru.practicum.stats.mapper.EndpointHitMapper;
+import ru.practicum.stats.model.EndpointHit;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@NoArgsConstructor
 @Transactional(readOnly = true)
 public class StatsServiceImpl implements StatsService {
-    private StatsRepository repository;
+    private final StatsRepository repository;
 
     @Override
     @Transactional(readOnly = true)
     public void saveHit(
-            HitDto dto
+            StatHitRequestDto dto
     ) {
-       // to Entity mapper
-        repository.save(dto);
+        EndpointHit endpoint = EndpointHitMapper.toEndpointHit(dto);
+        repository.save(endpoint);
     }
 
     @Override
-    public List<VievsDto> getStats(
+    public List<HitsCounterResponseDto> getStats(
             LocalDateTime start,
             LocalDateTime end,
             List<String> uris,
             boolean unique
     ) {
         if (unique) {
-            return repository.saveStatsUnique(start, end, uris);
+            return repository.getStatsUnique(start, end, uris);
         } else {
             return repository.getStats(start, end, uris);
         }
