@@ -1,4 +1,4 @@
-package request;
+/*package request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,14 +14,14 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HitsCounterRequestDto {
-	/*
+	*//*
 	Используется при вызове эндпоинта /stats
 	Получение статистики по посещениям.
 	Дата и время начала диапазона за который нужно выгрузить статистику,
 	Дата и время конца диапазона за который нужно выгрузить статистику,
 	Список uri для которых нужно выгрузить статистику
 	Нужно ли учитывать только уникальные посещения (только с уникальным ip)
-	 */
+	 *//*
 
 	@NotNull
 	LocalDateTime start;
@@ -29,10 +29,10 @@ public class HitsCounterRequestDto {
 	@NotNull
 	LocalDateTime end;
 
-	@NotNull
+	//@NotNull не нужен - не обязательно должен быть
 	@Size(min = 1)
 	List<String> uris;
 
-	@NotNull
+	//@NotNull не нужен - если он не указан то по спецификации (defaultValue = "false")
 	Boolean unique;
-}
+}*/
