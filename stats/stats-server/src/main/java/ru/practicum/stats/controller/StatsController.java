@@ -17,10 +17,6 @@ import java.util.List;
 public class StatsController {
     private final StatsService statsService;
 
-    /*public StatsController(StatsService statsService) {
-        this.statsService = statsService;
-    }*/
-
     @PostMapping("/hit")
     public ResponseEntity<Void> saveHit(
             @RequestBody StatHitRequestDto dto
