@@ -1,11 +1,8 @@
 package request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -28,6 +25,6 @@ public class StatHitRequestDto {
 	@NotBlank
 	String ip;
 
-	@NotNull
-	LocalDateTime timestamp;
+	@NotBlank
+	String timestamp;
 }

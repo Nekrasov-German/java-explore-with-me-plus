@@ -1,3 +1,4 @@
+/*
 package response;
 
 import lombok.*;
@@ -11,8 +12,11 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatListResponseDto {
-	/*
+	*/
+/*
 	Контейнер, который просто содержит список выгруженных статистик
-	 */
+	 *//*
+
 	List<HitsCounterResponseDto> hitsList;
 }
+*/
