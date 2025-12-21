@@ -2,7 +2,7 @@ package ru.practicum.stats.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import request.StatHitRequestDto;
+import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.stats.model.EndpointHit;
 
 import java.time.LocalDateTime;

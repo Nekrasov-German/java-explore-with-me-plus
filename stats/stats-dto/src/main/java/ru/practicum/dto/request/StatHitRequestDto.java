@@ -1,4 +1,4 @@
-package request;
+package ru.practicum.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
