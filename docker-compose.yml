@@ -15,7 +15,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 60s  # даём приложению 60 сек на старт
+      start_period: 60s
     networks:
         - ewm-network
 
