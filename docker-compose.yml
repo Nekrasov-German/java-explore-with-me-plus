@@ -1,23 +1,17 @@
 services:
-  stats-server:
-    build: stats/stats-server
-    container_name: stats-server
-    ports:
-      - "9090:9090"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
-      - SPRING_DATASOURCE_USERNAME=stat
-      - SPRING_DATASOURCE_PASSWORD=stat
-    depends_on:
-      - stats-db
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9090/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
-    networks:
-        - ewm-network
+#  stats-server:
+#    build: stats/stats-server
+#    container_name: stats-server
+#    ports:
+#      - "9090:9090"
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
+#      - SPRING_DATASOURCE_USERNAME=stat
+#      - SPRING_DATASOURCE_PASSWORD=stat
+#    depends_on:
+#      - stats-db
+#    networks:
+#        - ewm-network
 
   stats-db:
     image: postgres:16.1
@@ -28,28 +22,23 @@ services:
       - POSTGRES_PASSWORD=stat
       - POSTGRES_USER=stat
       - POSTGRES_DB=stats
-    command: [
-      "postgres",
-      "-c", "max_connections=100",
-      "-c", "shared_buffers=128MB"
-    ]
     networks:
       - ewm-network
 
-  ewm-service:
-    build: main-service
-    container_name: ewm-service
-    ports:
-      - "8080:8080"
-    environment:
-      - CLIENT_URL=http://stats-server:9090
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm-main
-      - SPRING_DATASOURCE_USERNAME=stat
-      - SPRING_DATASOURCE_PASSWORD=stat
-    depends_on:
-      - ewm-db
-    networks:
-      - ewm-network
+#  ewm-service:
+#    build: main-service
+#    container_name: ewm-service
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - CLIENT_URL=http://stats-server:9090
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm-main
+#      - SPRING_DATASOURCE_USERNAME=stat
+#      - SPRING_DATASOURCE_PASSWORD=stat
+#    depends_on:
+#      - ewm-db
+#    networks:
+#      - ewm-network
 
   ewm-db:
     image: postgres:16.1
