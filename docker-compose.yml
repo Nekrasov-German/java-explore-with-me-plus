@@ -10,8 +10,14 @@ services:
       - SPRING_DATASOURCE_PASSWORD=stat
     depends_on:
       - stats-db
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9090/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s  # даём приложению 60 сек на старт
     networks:
-      - ewm-network
+        - ewm-network
 
   stats-db:
     image: postgres:16.1
@@ -22,6 +28,11 @@ services:
       - POSTGRES_PASSWORD=stat
       - POSTGRES_USER=stat
       - POSTGRES_DB=stats
+    command: [
+      "postgres",
+      "-c", "max_connections=100",
+      "-c", "shared_buffers=128MB"
+    ]
     networks:
       - ewm-network
 
