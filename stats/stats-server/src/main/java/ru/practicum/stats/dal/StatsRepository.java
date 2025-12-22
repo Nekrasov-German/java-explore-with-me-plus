@@ -3,14 +3,14 @@ package ru.practicum.stats.dal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import response.HitsCounterResponseDto;
+import ru.practicum.dto.response.HitsCounterResponseDto;
 import ru.practicum.stats.model.EndpointHit;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
-    @Query("SELECT new response.HitsCounterResponseDto(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
+    @Query("SELECT new ru.practicum.dto.response.HitsCounterResponseDto(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
             "FROM EndpointHit h " +
             "WHERE h.timestamp BETWEEN :start and :end " +
             "AND (:uris IS NULL OR h.uri IN :uris) " +
@@ -22,7 +22,7 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
             @Param("uris") List<String> uris
     );
 
-    @Query("SELECT new response.HitsCounterResponseDto(h.app, h.uri, COUNT(h.ip)) " +
+    @Query("SELECT new ru.practicum.dto.response.HitsCounterResponseDto(h.app, h.uri, COUNT(h.ip)) " +
             "FROM EndpointHit h " +
             "WHERE h.timestamp BETWEEN :start AND :end " +
             "AND (:uris IS NULL OR h.uri IN :uris) " +

@@ -3,8 +3,8 @@ package ru.practicum.stats.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import request.StatHitRequestDto;
-import response.HitsCounterResponseDto;
+import ru.practicum.dto.request.StatHitRequestDto;
+import ru.practicum.dto.response.HitsCounterResponseDto;
 import ru.practicum.stats.dal.StatsRepository;
 import ru.practicum.stats.mapper.EndpointHitMapper;
 import ru.practicum.stats.model.EndpointHit;
@@ -19,7 +19,7 @@ public class StatsServiceImpl implements StatsService {
     private final StatsRepository repository;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void saveHit(
             StatHitRequestDto dto
     ) {

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import request.StatHitRequestDto;
-import response.HitsCounterResponseDto;
+import ru.practicum.dto.request.StatHitRequestDto;
+import ru.practicum.dto.response.HitsCounterResponseDto;
 import ru.practicum.stats.service.StatsService;
 
 import java.time.LocalDateTime;
