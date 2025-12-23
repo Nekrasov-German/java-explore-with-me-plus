@@ -2,6 +2,7 @@ package ru.practicum.stats.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.stats.model.EndpointHit;
 
@@ -9,8 +10,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class EndpointHitMapper {
-    public static EndpointHit toEndpointHit(StatHitRequestDto dto) {
+    public EndpointHit toEndpointHit(StatHitRequestDto dto) {
         return EndpointHit.builder()
                 .app(dto.getApp())
                 .uri(dto.getUri())
