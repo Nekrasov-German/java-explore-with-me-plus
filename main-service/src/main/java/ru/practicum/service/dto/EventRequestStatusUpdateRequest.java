@@ -1,0 +1,16 @@
+package ru.practicum.service.dto;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.experimental.FieldDefaults;
+import ru.practicum.service.model.enums.Status;
+
+import java.util.List;
+
+@Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class EventRequestStatusUpdateRequest {
+    // Изменение статуса запроса на участие в событии текущего пользователя
+    List<Integer> requestIds;
+    Status status;
+}

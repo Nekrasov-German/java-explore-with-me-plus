@@ -1,0 +1,29 @@
+package ru.practicum.service.dto;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.experimental.FieldDefaults;
+import ru.practicum.service.model.enums.State;
+
+import java.time.LocalDateTime;
+
+@Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class EventFullDto {
+    String annotation;
+    CategoryDto category;
+    Integer confirmedRequests;
+    LocalDateTime createdOn;
+    String description;
+    LocalDateTime eventDate;
+    Integer id;
+    UserShortDto initiator;
+    Location location;
+    Boolean paid;
+    Integer participantLimit;
+    String publishedOn;
+    Boolean requestModeration;
+    State state;
+    String title;
+    Integer views;
+}
