@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS events (
     description TEXT,
     category_id BIGINT REFERENCES categories(id),
     initiator_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    location_id BIGINT REFERENCES locations(id),
+    lat FLOAT NOT NULL,
+    lon FLOAT NOT NULL,
     event_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     created_on TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     state VARCHAR(20) NOT NULL DEFAULT 'PENDING' CHECK (state IN ('PENDING', 'PUBLISHED', 'CANCELED')),
@@ -25,13 +26,6 @@ CREATE TABLE IF NOT EXISTS events (
     participant_limit INTEGER DEFAULT 0 CHECK (participant_limit >= 0),
     request_moderation BOOLEAN DEFAULT TRUE,
     confirmed_requests INTEGER DEFAULT 0 CHECK (confirmed_requests >= 0),
-    /*views INTEGER DEFAULT 0 CHECK (views >= 0)*/
-    );
-
-CREATE TABLE locations (
-    id BIGINT PRIMARY KEY,
-    lat FLOAT,
-    lon FLOAT
     );
 
 CREATE TABLE IF NOT EXISTS requests (
@@ -53,9 +47,7 @@ CREATE TABLE IF NOT EXISTS compilations (
 CREATE TABLE IF NOT EXISTS compilation_events (
     compilation_id BIGINT NOT NULL REFERENCES compilations(id) ON DELETE CASCADE,
     event_id BIGINT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-    PRIMARY KEY (compilation_id, event_id),
-
-    CONSTRAINT uq_compilation_events UNIQUE (compilation_id, event_id)
+    PRIMARY KEY (compilation_id, event_id)
     );
 
 CREATE TABLE IF NOT EXISTS comments (

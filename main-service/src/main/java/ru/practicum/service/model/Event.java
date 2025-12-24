@@ -37,10 +37,9 @@ public class Event {
     @ToString.Exclude
     private User initiator;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
-    @ToString.Exclude
-    private Location location;
+    @Embedded
+    @Builder.Default
+    private Location location  = new Location();
 
     @Column(name = "event_date")
     private LocalDateTime eventDate;
@@ -72,9 +71,6 @@ public class Event {
     @ManyToMany(mappedBy = "events")
     @ToString.Exclude
     private Set<Compilation> compilations = new HashSet<>();
-
-    // ???????????????????????????????????
-    private Integer views = 0;
 
     @Override
     public boolean equals(Object o) {
