@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 public class NewEventDto {
     // Новое событие
     String annotation;
-    Integer category;
+    Long category;
     Integer id;
     String description;
     LocalDateTime eventDate;
-    Location location;
+    LocationDto location;
     Boolean paid;
     Integer participantLimit;
     Boolean requestModeration;

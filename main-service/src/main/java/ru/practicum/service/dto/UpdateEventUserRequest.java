@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 public class UpdateEventUserRequest {
     // Данные для изменения информации о событии. Если поле в запросе не указано (равно null) - значит изменение этих данных не треубется.
     String annotation;
-    Integer category;
+    Long category;
     String description;
     LocalDateTime eventDate;
-    Location location;
+    LocationDto location;
     Boolean paid;
     Integer participantLimit;
     Boolean requestModeration;

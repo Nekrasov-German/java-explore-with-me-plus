@@ -45,6 +45,7 @@ public class Event {
     private LocalDateTime eventDate;
 
     @Column(name = "created_on")
+    @Builder.Default
     private LocalDateTime createdOn = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
@@ -56,20 +57,25 @@ public class Event {
     private Boolean paid = false;
 
     @Column(name = "participant_limit")
+    @Builder.Default
     private Integer participantLimit = 0;
 
     @Column(name = "request_moderation")
+    @Builder.Default
     private Boolean requestModeration = true;
 
     @Column(name = "confirmed_requests")
+    @Builder.Default
     private Integer confirmedRequests = 0;
 
     @OneToMany(mappedBy = "event")
     @ToString.Exclude
+    @Builder.Default
     private Set<Request> requests = new HashSet<>();
 
     @ManyToMany(mappedBy = "events")
     @ToString.Exclude
+    @Builder.Default
     private Set<Compilation> compilations = new HashSet<>();
 
     @Override

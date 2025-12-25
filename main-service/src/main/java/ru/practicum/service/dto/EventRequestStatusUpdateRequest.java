@@ -11,6 +11,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventRequestStatusUpdateRequest {
     // Изменение статуса запроса на участие в событии текущего пользователя
-    List<Integer> requestIds;
+    List<Long> requestIds;
     Status status;
 }
