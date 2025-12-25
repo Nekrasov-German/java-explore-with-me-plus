@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 public class ParticipationRequestDto {
     // Заявка на участие в событии
     LocalDateTime created; // в swagger формат 2022-09-06T21:10:05.432
-    Integer event;
-    Integer id;
-    Integer requester;
+    Long event;
+    Long id;
+    Long requester;
     Status status;
 }

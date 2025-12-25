@@ -10,7 +10,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewCompilationDto {
     // Подборка событий
-    List<Integer> events;
+    List<Long> events;
     Boolean pinned;
     String title;
 }

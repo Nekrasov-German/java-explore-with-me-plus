@@ -11,7 +11,7 @@ import java.util.List;
 public class CompilationDto {
     // Подборка событий
     List<EventShortDto> events;
-    Integer id;
+    Long id;
     Boolean pinned;
     String title;
 }
