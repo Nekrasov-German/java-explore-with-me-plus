@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventShortDto {
     //Краткая информация о событии
-    Integer id;
+    Long id;
     String annotation;
     CategoryDto category;
     Integer confirmedRequests;
@@ -18,5 +18,5 @@ public class EventShortDto {
     UserShortDto initiator;
     Boolean paid;
     String title;
-    Integer views;
+    Long views;
 }

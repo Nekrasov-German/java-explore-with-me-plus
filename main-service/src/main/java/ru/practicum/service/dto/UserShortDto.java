@@ -7,6 +7,6 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserShortDto {
-    Integer id;
+    Long id;
     String name;
 }
