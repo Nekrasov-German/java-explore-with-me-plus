@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
+import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.dto.response.HitsCounterResponseDto;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dto.EventShortDto;
@@ -15,6 +16,7 @@ import ru.practicum.service.model.Event;
 import ru.practicum.service.public_ewm.mapper.PublicEventMapper;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class PublicEventServiceImpl implements PublicEventService {
     final EventRepository eventRepository;
     final StatClient statClient;
+    final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @Override
     public List<EventShortDto> getEvents(String text,
@@ -57,6 +60,11 @@ public class PublicEventServiceImpl implements PublicEventService {
         if (sort == EventSort.VIEWS) result = result.stream()
                 .sorted(Comparator.comparingLong(EventShortDto::getViews)
                         .reversed()).toList();
+
+        statClient.hit(new StatHitRequestDto("ewm-main-service",
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))));
 
         return result;
     }
