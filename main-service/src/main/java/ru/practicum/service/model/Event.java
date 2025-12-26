@@ -66,7 +66,7 @@ public class Event {
 
     @Column(name = "confirmed_requests")
     @Builder.Default
-    private Integer confirmedRequests = 0;
+    private Long confirmedRequests = 0L;
 
     @OneToMany(mappedBy = "event")
     @ToString.Exclude

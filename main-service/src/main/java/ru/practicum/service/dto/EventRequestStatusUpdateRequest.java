@@ -12,5 +12,6 @@ import java.util.List;
 public class EventRequestStatusUpdateRequest {
     // Изменение статуса запроса на участие в событии текущего пользователя
     List<Long> requestIds;
+
     Status status;
 }

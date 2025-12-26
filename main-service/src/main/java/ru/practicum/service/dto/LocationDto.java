@@ -8,5 +8,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LocationDto {
     Double lat;
+
     Double lon;
 }
