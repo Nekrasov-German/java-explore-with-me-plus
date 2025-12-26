@@ -11,8 +11,10 @@ import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.dto.response.HitsCounterResponseDto;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dto.Constant;
+import ru.practicum.service.dto.EventFullDto;
 import ru.practicum.service.dto.EventShortDto;
 import ru.practicum.service.dto.EventSort;
+import ru.practicum.service.error.NotFoundException;
 import ru.practicum.service.model.Event;
 import ru.practicum.service.public_ewm.mapper.PublicEventMapper;
 
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 public class PublicEventServiceImpl implements PublicEventService {
     final EventRepository eventRepository;
     final StatClient statClient;
+    final String URI_EVENT_ENDPOINT = "/events/";
+    final LocalDateTime VERY_PAST = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     @Override
     public List<EventShortDto> getEvents(String text,
@@ -46,7 +50,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         if (rangeEnd == null) rangeEnd = LocalDateTime.now().plusYears(1000);
 
         List<Event> eventsList = eventRepository.findPublicEventsNative(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, from, size);
-        List<String> eventsUrisList = eventsList.stream().map(event -> "/events/" + event.getId()).toList();
+        List<String> eventsUrisList = eventsList.stream().map(event -> URI_EVENT_ENDPOINT + event.getId()).toList();
 
         List<HitsCounterResponseDto> hitsCounterList = statClient.getHits(rangeStart, rangeEnd, eventsUrisList, true);
         Map<Long, Long> eventIdEventHits =  hitsCounterList.stream()
@@ -61,12 +65,33 @@ public class PublicEventServiceImpl implements PublicEventService {
                 .sorted(Comparator.comparingLong(EventShortDto::getViews)
                         .reversed()).toList();
 
-        statClient.hit(new StatHitRequestDto("ewm-main-service",
+        statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
                 request.getRequestURI(),
                 request.getRemoteAddr(),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT))));
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
+        );
 
         return result;
+    }
+
+    @Override
+    public EventFullDto getById(Long id, HttpServletRequest request) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Событие с id: %d не найдено", id)));
+
+        List<HitsCounterResponseDto> hitsCounter = statClient.getHits(VERY_PAST,
+                LocalDateTime.now(),
+                List.of(URI_EVENT_ENDPOINT + event.getId()),
+                true);
+        Long views = hitsCounter.isEmpty() ? 0L : hitsCounter.getFirst().getHits();
+
+        statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
+        );
+
+        return PublicEventMapper.toEventFullDto(event, views);
     }
 
 

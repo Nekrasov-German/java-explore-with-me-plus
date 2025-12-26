@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.service.dto.EventFullDto;
 import ru.practicum.service.dto.EventShortDto;
 import ru.practicum.service.dto.EventSort;
 import ru.practicum.service.public_ewm.service.PublicEventService;
@@ -38,8 +36,19 @@ public class PublicEventController {
                                          @RequestParam(name = "from", defaultValue = "0") Integer from,
                                          @RequestParam(name = "size", defaultValue = "10") Integer size,
                                          HttpServletRequest request) {
+        log.info("PublicEventController: вызов эндпоинта GET events/ " +
+                        "с параметрами запроса --  " +
+                        "text:{}, categories:{}, paid:{}, rangeStart:{}, rangeEnd:{}, onlyAvailable:{}, sort:{}, from:{}, size:{}",
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
 
         return publicEventService.getEvents(text, categories, paid, rangeStart, rangeEnd,
                 onlyAvailable, sort, from, size, request);
+    }
+
+    @GetMapping("/{id}")
+    public EventFullDto getEventById(@PathVariable(value = "id") Long id, HttpServletRequest request) {
+        log.info("PublicEventController: вызов эндпоинта GET events/{}", id);
+
+        return publicEventService.getById(id, request);
     }
 }

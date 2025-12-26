@@ -1,8 +1,6 @@
 package ru.practicum.service.public_ewm.mapper;
 
-import ru.practicum.service.dto.CategoryDto;
-import ru.practicum.service.dto.EventShortDto;
-import ru.practicum.service.dto.UserShortDto;
+import ru.practicum.service.dto.*;
 import ru.practicum.service.model.Event;
 
 public class PublicEventMapper {
@@ -29,6 +27,42 @@ public class PublicEventMapper {
         esd.setViews(views);
 
         return esd;
+    }
+
+    public static EventFullDto toEventFullDto(Event e, Long views) {
+        EventFullDto efd = new EventFullDto();
+        efd.setAnnotation(e.getAnnotation());
+
+        CategoryDto cd = new CategoryDto(); // Заменить на маппер
+        cd.setId(e.getCategory().getId());
+        cd.setName(e.getCategory().getName());
+        efd.setCategoryDto(cd);
+
+        efd.setConfirmedRequests(e.getConfirmedRequests());
+        efd.setCreatedOn(e.getCreatedOn());
+        efd.setDescription(e.getDescription());
+        efd.setEventDate(e.getEventDate());
+        efd.setId(e.getId());
+
+        UserShortDto usd = new UserShortDto(); // Заменить на маппер
+        usd.setId(e.getInitiator().getId());
+        usd.setName(e.getInitiator().getName());
+        efd.setInitiatorDto(usd);
+
+        LocationDto ld = new LocationDto(); // Заменить на маппер
+        ld.setLat(e.getLocation().getLat());
+        ld.setLon(e.getLocation().getLon());
+        efd.setLocationDto(ld);
+
+        efd.setPaid(e.getPaid());
+        efd.setParticipantLimit(e.getParticipantLimit());
+        efd.setPublishedOn(e.getPublishedOn());
+        efd.setRequestModeration(e.getRequestModeration());
+        efd.setState(e.getState());
+        efd.setTitle(e.getTitle());
+        efd.setViews(views);
+
+        return efd;
     }
 
     public static Long extractIdFromUri(String uri) {
