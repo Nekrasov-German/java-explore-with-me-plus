@@ -1,5 +1,7 @@
 package ru.practicum.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -12,13 +14,25 @@ import java.time.LocalDateTime;
 public class UpdateEventAdminRequest {
     // Данные для изменения информации о событии. Если поле в запросе не указано (равно null) - значит изменение этих данных не треубется.
     String annotation;
-    Long category;
+
+    @JsonProperty(value = "category")
+    Long categoryId;
+
     String description;
+
+    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     LocalDateTime eventDate;
-    LocationDto location;
+
+    @JsonProperty(value = "location")
+    LocationDto locationDto;
+
     Boolean paid;
+
     Integer participantLimit;
+
     Boolean requestModeration;
+
     State state;
+
     String title;
 }

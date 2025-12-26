@@ -10,6 +10,7 @@ import ru.practicum.client.StatClient;
 import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.dto.response.HitsCounterResponseDto;
 import ru.practicum.service.dal.EventRepository;
+import ru.practicum.service.dto.Constant;
 import ru.practicum.service.dto.EventShortDto;
 import ru.practicum.service.dto.EventSort;
 import ru.practicum.service.model.Event;
@@ -29,7 +30,6 @@ import java.util.stream.Collectors;
 public class PublicEventServiceImpl implements PublicEventService {
     final EventRepository eventRepository;
     final StatClient statClient;
-    final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @Override
     public List<EventShortDto> getEvents(String text,
@@ -64,7 +64,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         statClient.hit(new StatHitRequestDto("ewm-main-service",
                 request.getRequestURI(),
                 request.getRemoteAddr(),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))));
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT))));
 
         return result;
     }

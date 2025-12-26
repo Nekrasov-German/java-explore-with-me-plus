@@ -11,5 +11,6 @@ import java.util.List;
 public class EventRequestStatusUpdateResult {
     // Результат подтверждения/отклонения заявок на участие в событии
     List<ParticipationRequestDto> confirmedRequests;
+
     List<ParticipationRequestDto> rejectedRequests;
 }

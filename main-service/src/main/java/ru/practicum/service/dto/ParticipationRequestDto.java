@@ -1,5 +1,6 @@
 package ru.practicum.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -12,8 +13,14 @@ import java.time.LocalDateTime;
 public class ParticipationRequestDto {
     // Заявка на участие в событии
     LocalDateTime created; // в swagger формат 2022-09-06T21:10:05.432
-    Long event;
+
+    @JsonProperty(value = "event")
+    Long eventId;
+
     Long id;
-    Long requester;
+
+    @JsonProperty(value = "requester")
+    Long requesterId;
+
     Status status;
 }

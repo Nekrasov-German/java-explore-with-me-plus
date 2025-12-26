@@ -14,7 +14,7 @@ public class PublicEventMapper {
         CategoryDto cd = new CategoryDto();
         cd.setId(e.getCategory().getId()); // Заменить на
         cd.setName(e.getCategory().getName()); // маппер
-        esd.setCategory(cd);
+        esd.setCategoryDto(cd);
 
         esd.setConfirmedRequests(e.getConfirmedRequests());
         esd.setEventDate(e.getEventDate());
@@ -22,7 +22,7 @@ public class PublicEventMapper {
         UserShortDto usd = new UserShortDto();
         usd.setId(e.getInitiator().getId()); // Заменить на
         usd.setName(e.getInitiator().getName()); // маппер
-        esd.setInitiator(usd);
+        esd.setInitiatorDto(usd);
 
         esd.setPaid(e.getPaid());
         esd.setTitle(e.getTitle());
