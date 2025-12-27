@@ -11,6 +11,7 @@ import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dto.CategoryDto;
 import ru.practicum.service.dto.Constant;
+import ru.practicum.service.error.NotFoundException;
 import ru.practicum.service.model.Category;
 import ru.practicum.service.public_ewm.mapper.PublicCategoryMapper;
 
@@ -40,5 +41,21 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
         );
 
         return categoryList.stream().map(PublicCategoryMapper::toCategoryDto).toList();
+    }
+
+    @Override
+    public CategoryDto findById(Long catId, HttpServletRequest request) {
+        log.info("PublicCategoryService: поиск категории с переданным id:");
+        Category category = categoryRepository.findById(catId)
+                .orElseThrow(() -> new NotFoundException(String.format("Категория с id: %d не найдена", catId)));
+        log.info("{}", category);
+
+        statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
+        );
+
+        return PublicCategoryMapper.toCategoryDto(category);
     }
 }

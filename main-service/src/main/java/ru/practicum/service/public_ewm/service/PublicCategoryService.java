@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface PublicCategoryService {
     List<CategoryDto> findCategories(Long from, Long size, HttpServletRequest request);
+
+    CategoryDto findById(Long catId, HttpServletRequest request);
 }
