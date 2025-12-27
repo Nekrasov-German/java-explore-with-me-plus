@@ -21,20 +21,20 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
 public class PublicEventController {
-    PublicEventService publicEventService;
+    final PublicEventService publicEventService;
 
     @GetMapping
-    public List<EventShortDto> getEvents(@RequestParam(name = "text", required = false) String text,
-                                         @RequestParam(name = "categories", required = false) List<Long> categories,
-                                         @RequestParam(name = "paid", required = false) Boolean paid,
-                                         @RequestParam(name = "rangeStart", required = false)
+    public List<EventShortDto> getEvents(@RequestParam(value = "text", required = false) String text,
+                                         @RequestParam(value = "categories", required = false) List<Long> categories,
+                                         @RequestParam(value = "paid", required = false) Boolean paid,
+                                         @RequestParam(value = "rangeStart", required = false)
                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-                                         @RequestParam(name = "rangeEnd", required = false)
+                                         @RequestParam(value = "rangeEnd", required = false)
                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                         @RequestParam(name = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
-                                         @RequestParam(name = "sort", required = false) EventSort sort,
-                                         @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                         @RequestParam(name = "size", defaultValue = "10") Integer size,
+                                         @RequestParam(value = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
+                                         @RequestParam(value = "sort", required = false) EventSort sort,
+                                         @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                         @RequestParam(value = "size", defaultValue = "10") Integer size,
                                          HttpServletRequest request) {
         log.info("PublicEventController: вызов эндпоинта GET events/ " +
                         "с параметрами запроса --  " +
