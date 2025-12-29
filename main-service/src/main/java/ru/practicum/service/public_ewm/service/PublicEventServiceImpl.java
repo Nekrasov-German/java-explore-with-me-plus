@@ -49,10 +49,14 @@ public class PublicEventServiceImpl implements PublicEventService {
         if (rangeStart == null && rangeEnd == null) rangeStart = LocalDateTime.now();
         if (rangeEnd == null) rangeEnd = LocalDateTime.now().plusYears(1000);
 
+        log.info("PublicEventService: Поиск ивентов с заданными параметрами");
         List<Event> eventsList = eventRepository.findPublicEventsNative(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, from, size);
+        log.info("PublicEventService: {}", eventsList);
         List<String> eventsUrisList = eventsList.stream().map(event -> URI_EVENT_ENDPOINT + event.getId()).toList();
 
+        log.info("PublicEventService: Выгрузка статистики по найденным ивентам");
         List<HitsCounterResponseDto> hitsCounterList = statClient.getHits(rangeStart, rangeEnd, eventsUrisList, true);
+        log.info("PublicEventService: {}", hitsCounterList);
         Map<Long, Long> eventIdEventHits =  hitsCounterList.stream()
                 .collect(Collectors.toMap(hitsCounter ->
                         PublicEventMapper.extractIdFromUri(hitsCounter.getUri()), HitsCounterResponseDto::getHits));
@@ -76,9 +80,11 @@ public class PublicEventServiceImpl implements PublicEventService {
 
     @Override
     public EventFullDto getById(Long id, HttpServletRequest request) {
+        log.info("PublicEventService: Поиск ивента с переданным id: {}", id);
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Событие с id: %d не найдено", id)));
 
+        log.info("PublicEventService: Выгрузка статистики по найденному ивенту");
         List<HitsCounterResponseDto> hitsCounter = statClient.getHits(VERY_PAST,
                 LocalDateTime.now(),
                 List.of(URI_EVENT_ENDPOINT + event.getId()),

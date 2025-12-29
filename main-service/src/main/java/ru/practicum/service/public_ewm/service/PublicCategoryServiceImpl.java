@@ -1,0 +1,61 @@
+package ru.practicum.service.public_ewm.service;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import ru.practicum.client.StatClient;
+import ru.practicum.dto.request.StatHitRequestDto;
+import ru.practicum.service.dal.CategoryRepository;
+import ru.practicum.service.dto.CategoryDto;
+import ru.practicum.service.dto.Constant;
+import ru.practicum.service.error.NotFoundException;
+import ru.practicum.service.model.Category;
+import ru.practicum.service.public_ewm.mapper.PublicCategoryMapper;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+@Service
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
+@Slf4j
+public class PublicCategoryServiceImpl implements PublicCategoryService {
+    final CategoryRepository categoryRepository;
+    final StatClient statClient;
+    final String URI_CATEGORY_ENDPOINT = "/category";
+
+    @Override
+    public List<CategoryDto> findCategories(Long from, Long size, HttpServletRequest request) {
+        log.info("PublicCategoryService: выгрузка категорий по заданным параметрам:");
+        List<Category> categoryList = categoryRepository.findCategories(from, size);
+        log.info("{}", categoryList);
+
+        statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
+        );
+
+        return categoryList.stream().map(PublicCategoryMapper::toCategoryDto).toList();
+    }
+
+    @Override
+    public CategoryDto findById(Long catId, HttpServletRequest request) {
+        log.info("PublicCategoryService: поиск категории с переданным id:");
+        Category category = categoryRepository.findById(catId)
+                .orElseThrow(() -> new NotFoundException(String.format("Категория с id: %d не найдена", catId)));
+        log.info("{}", category);
+
+        statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
+        );
+
+        return PublicCategoryMapper.toCategoryDto(category);
+    }
+}
