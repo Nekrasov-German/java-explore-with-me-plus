@@ -23,10 +23,10 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
             throw new ConflictException("Категория с названием " + dto.getName() + " уже существует.");
         }
 
-        Category category = CategoryMapper.toEntity(dto);
+        Category category = CategoryMapper.toCategoryEntity(dto);
         Category saved = repository.save(category);
 
-        return CategoryMapper.toDto(saved);
+        return CategoryMapper.toCategoryDto(saved);
     }
 
     @Override
@@ -55,6 +55,6 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         category.setName(dto.getName());
         Category updated = repository.save(category);
 
-        return CategoryMapper.toDto(updated);
+        return CategoryMapper.toCategoryDto(updated);
     }
 }

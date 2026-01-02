@@ -27,14 +27,14 @@ public class AdminUserServiceImpl implements AdminUserService {
         Pageable pageable = PageRequest.of(from, size);
         Page<User> users;
 
-        if (ids==null || ids.isEmpty()){
+        if (ids==null || ids.isEmpty()) {
             users = repository.findAll(pageable);
         } else {
             users = repository.findByIdIn(ids, pageable);
         }
 
         return users.getContent().stream()
-                .map(UserMapper::toDto)
+                .map(UserMapper::toUserDto)
                 .toList();
     }
 
@@ -45,10 +45,10 @@ public class AdminUserServiceImpl implements AdminUserService {
             throw new ConflictException("Адрес электронной почты уже существует.");
         }
 
-        User user = UserMapper.toEntity(dto);
+        User user = UserMapper.toUserEntity(dto);
         User savedUser = repository.save(user);
 
-        return UserMapper.toDto(savedUser);
+        return UserMapper.toUserDto(savedUser);
     }
 
     @Override
