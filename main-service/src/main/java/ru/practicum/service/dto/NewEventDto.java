@@ -17,7 +17,7 @@ public class NewEventDto {
     @JsonProperty(value = "category")
     Long categoryId;
 
-    Long id; // В сваггере нет этого поля, возможно, стоит удалить
+    //Long id; В сваггере нет этого поля, возможно, стоит удалить
 
     String description;
 
