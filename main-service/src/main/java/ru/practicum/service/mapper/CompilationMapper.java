@@ -7,6 +7,7 @@ import ru.practicum.service.dto.NewCompilationDto;
 import ru.practicum.service.model.Compilation;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ public class CompilationMapper {
         return Compilation.builder()
                 .title(dto.getTitle())
                 .pinned(dto.getPinned())
-                .events(Collections.emptySet())
+                .events(new HashSet<>())
                 .build();
     }
 
