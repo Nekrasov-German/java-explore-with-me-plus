@@ -20,7 +20,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Override
     public CategoryDto createCategory(NewCategoryDto dto) {
         if (repository.existsByName(dto.getName())) {
-            throw new ConflictException("Категория с названием " + dto.getName() + " уже существует");
+            throw new ConflictException("Категория с названием " + dto.getName() + " уже существует.");
         }
 
         Category category = CategoryMapper.toEntity(dto);
@@ -32,7 +32,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Override
     public void deleteCategory(Long catId) {
         Category category = repository.findById(catId).
-                orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена"));
+                orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена."));
 
         if (!category.getEvents().isEmpty()) {
             throw new ConflictException("Нельзя удалить категорию с id=" + catId + " так как с ней связаны события." +
@@ -45,11 +45,11 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Override
     public CategoryDto updateCategory(Long catId, CategoryDto dto) {
         Category category = repository.findById(catId).
-                orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена"));
+                orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена."));
 
         if (!category.getName().equals(dto.getName()) &&
             repository.existsByNameAndIdNot(dto.getName(), catId)) {
-            throw new ConflictException("Категория с названием " + dto.getName() + " уже существует");
+            throw new ConflictException("Категория с названием " + dto.getName() + " уже существует.");
         }
 
         category.setName(dto.getName());
