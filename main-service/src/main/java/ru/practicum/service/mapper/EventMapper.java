@@ -10,7 +10,7 @@ import ru.practicum.service.model.User;
 
 @UtilityClass
 public class EventMapper {
-    public static EventShortDto toEventShortDto(Event event) {
+    public EventShortDto toEventShortDto(Event event) {
         return EventShortDto.builder()
                 .annotation(event.getAnnotation())
                 .categoryDto(CategoryMapper.toCategoryDto(event.getCategory()))
