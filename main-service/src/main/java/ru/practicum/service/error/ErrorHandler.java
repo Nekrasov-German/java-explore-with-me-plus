@@ -41,7 +41,19 @@ public class ErrorHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleBadRequestException(final MethodArgumentNotValidException e) {
+    public ApiError handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        log.error("400 {}", e.getMessage(), e);
+        return ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.toString())
+                .reason("Неправильно оформленный запрос")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
+                .build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleIllegalArgumentException(final IllegalArgumentException e) {
         log.error("400 {}", e.getMessage(), e);
         return ApiError.builder()
                 .status(HttpStatus.BAD_REQUEST.toString())
