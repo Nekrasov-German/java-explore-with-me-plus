@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-//@Builder                                                          // для маппера
+@Builder
 public class CategoryDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long id;
