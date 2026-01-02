@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class CompilationMapper {
-    public static Compilation newCompilationToEntity(NewCompilationDto dto) {
+    public Compilation newCompilationToEntity(NewCompilationDto dto) {
         return Compilation.builder()
                 .title(dto.getTitle())
                 .pinned(dto.getPinned())
@@ -20,7 +20,7 @@ public class CompilationMapper {
                 .build();
     }
 
-    public static CompilationDto toCompilationDto(Compilation compilation) {
+    public CompilationDto toCompilationDto(Compilation compilation) {
         Set<EventShortDto> eventsDto = Collections.emptySet();
 
         if (compilation.getEvents() != null) {
