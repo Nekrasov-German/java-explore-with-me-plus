@@ -49,6 +49,7 @@ public class Event {
     private LocalDateTime createdOn = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private State state = State.PENDING;
 
     @Column(name = "published_on")
