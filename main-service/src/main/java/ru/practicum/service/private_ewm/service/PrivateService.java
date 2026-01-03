@@ -11,7 +11,7 @@ public interface PrivateService {
 
     EventFullDto createEvent(Long userId, NewEventDto newEventDto, HttpServletRequest request);
 
-    EventFullDto getInfoEvent(Long userId, Long eventId);
+    EventFullDto getInfoEvent(Long userId, Long eventId, HttpServletRequest request);
 
     EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest);
 
