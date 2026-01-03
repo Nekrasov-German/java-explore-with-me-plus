@@ -12,16 +12,20 @@ import ru.practicum.client.StatClient;
 import ru.practicum.dto.response.HitsCounterResponseDto;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dal.EventRepository;
+import ru.practicum.service.dal.RequestRepository;
 import ru.practicum.service.dal.UserRepository;
 import ru.practicum.service.dto.*;
 import ru.practicum.service.error.ConflictException;
 import ru.practicum.service.error.NotFoundException;
 import ru.practicum.service.error.ValidationException;
 import ru.practicum.service.mapper.EventMapper;
+import ru.practicum.service.mapper.RequestMapper;
 import ru.practicum.service.model.Category;
 import ru.practicum.service.model.Event;
+import ru.practicum.service.model.Request;
 import ru.practicum.service.model.User;
 import ru.practicum.service.model.enums.State;
+import ru.practicum.service.model.enums.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +42,7 @@ public class PrivateServiceImpl implements PrivateService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final RequestRepository requestRepository;
 
 
     @Override
@@ -78,7 +83,7 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
-    public EventFullDto getInfoEvent(Long userId, Long eventId, HttpServletRequest request) {
+    public EventFullDto getInfoEvent(Long userId, Long eventId, HttpServletRequest request) { //TODO добавить просмотры
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Такого события не найдено."));
         userRepository.findById(userId)
@@ -129,8 +134,34 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
-    public ParticipationRequestDto createRequestForParticipation(Long userId, Long eventId) {
-        return null;
+    public ParticipationRequestDto createRequestForParticipation(Long userId, Long eventId) { //TODO проверить после появления admin/events/{eventId}
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Событие не найдено"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        if (event.getInitiator().equals(user)) {
+            throw new ConflictException("инициатор события не может добавить запрос на участие в своём событии.");
+        }
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("нельзя участвовать в неопубликованном событии.");
+        }
+        if (event.getParticipantLimit() == event.getRequests().size()) {
+            throw new ConflictException("у события достигнут лимит запросов на участие");
+        }
+
+        Request request = Request.builder()
+                .requester(user)
+                .event(event)
+                .build();
+
+        if (!event.getRequestModeration()) {
+            request.setStatus(Status.CONFIRMED);
+        }
+        //        Обратите внимание:
+        //TODO проверка на уникальность повторного запроса возможно вернется не 409
+        //нельзя добавить повторный запрос (Ожидается код ошибки 409)
+        return RequestMapper.toRequestDto(requestRepository.save(request));
     }
 
     @Override

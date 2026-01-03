@@ -27,13 +27,6 @@ public class PrivateRequestsController {
     public ResponseEntity<ParticipationRequestDto> createRequestForParticipation(
             @PathVariable(value = "userId") Long userId,
             @RequestParam(value = "eventId") Long eventId) {
-//        Обратите внимание:
-//
-//        нельзя добавить повторный запрос (Ожидается код ошибки 409)
-//        инициатор события не может добавить запрос на участие в своём событии (Ожидается код ошибки 409)
-//        нельзя участвовать в неопубликованном событии (Ожидается код ошибки 409)
-//        если у события достигнут лимит запросов на участие - необходимо вернуть ошибку (Ожидается код ошибки 409)
-//        если для события отключена пре-модерация запросов на участие, то запрос должен автоматически перейти в состояние подтвержденного
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createRequestForParticipation(userId, eventId));
     }
 
