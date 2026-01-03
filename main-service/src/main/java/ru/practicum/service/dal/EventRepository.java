@@ -7,6 +7,7 @@ import ru.practicum.service.model.Event;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     @Query(value = """
@@ -37,4 +38,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                        @Param("onlyAvailable") Boolean onlyAvailable,
                                        @Param("from") Integer from,
                                        @Param("size") Integer size);
+
+    List<Event> findAllByIdIn(Set<Long> ids);
 }
