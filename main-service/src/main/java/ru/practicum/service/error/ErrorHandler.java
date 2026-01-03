@@ -74,4 +74,16 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().format(FORMATTER))
                 .build();
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleValidationException(final ValidationException e) {
+        log.error("400 {}", e.getMessage(), e);
+        return ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.toString())
+                .reason("Ошибка валидации")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
+                .build();
+    }
 }
