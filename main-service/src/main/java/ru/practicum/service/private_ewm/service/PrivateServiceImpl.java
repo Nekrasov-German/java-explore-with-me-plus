@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PrivateServiceImpl implements PrivateService {
     private static final Logger log = LoggerFactory.getLogger(PrivateServiceImpl.class);
-    private final LocalDateTime VERY_PAST = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     private final StatClient client;
     private final CategoryRepository categoryRepository;
@@ -83,15 +82,14 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
-    public EventFullDto getInfoEvent(Long userId, Long eventId, HttpServletRequest request) { //TODO добавить просмотры
+    public EventFullDto getInfoEvent(Long userId, Long eventId, HttpServletRequest request) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Такого события не найдено."));
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Такого пользователя не существует."));
         EventFullDto eventFullDto = EventMapper.eventToEventFullDto(event);
 
-        List<HitsCounterResponseDto> hitsCounter = client.getHits(VERY_PAST,
-                LocalDateTime.now(),
+        List<HitsCounterResponseDto> hitsCounter = client.getHits(
                 List.of(request.getRequestURI()),
                 true);
         Long views = hitsCounter.isEmpty() ? 0L : hitsCounter.getFirst().getHits();
