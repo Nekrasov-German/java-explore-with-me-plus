@@ -37,7 +37,6 @@ public class EventMapper {
                 .participantLimit(newEventDto.getParticipantLimit())
                 .requestModeration(newEventDto.getRequestModeration())
                 .title(newEventDto.getTitle())
-                .state(State.PENDING)
                 .build();
     }
 
