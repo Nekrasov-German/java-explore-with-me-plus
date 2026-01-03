@@ -49,11 +49,13 @@ public class Event {
     private LocalDateTime createdOn = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private State state = State.PENDING;
 
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
+    @Builder.Default
     private Boolean paid = false;
 
     @Column(name = "participant_limit")
