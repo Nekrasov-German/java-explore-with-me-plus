@@ -26,13 +26,13 @@ public class PublicCategoryController {
                                                 HttpServletRequest request) {
         log.info("PublicCategoryController: вызов эндпоинта GET /category с параметрами -- from:{}, size:{}", from, size);
 
-        return categoryService.findCategories(from, size, request);
+        return categoryService.getCategories(from, size, request);
     }
 
     @GetMapping("/{catId}")
     public CategoryDto getCategory(@PathVariable(value = "catId") Long catId, HttpServletRequest request) {
         log.info("PublicCategoryController: вызов эндпоинта GET /category/{}", catId);
 
-        return categoryService.findById(catId, request);
+        return categoryService.getById(catId, request);
     }
 }

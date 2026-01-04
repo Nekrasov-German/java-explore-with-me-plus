@@ -29,7 +29,7 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
     final String URI_CATEGORY_ENDPOINT = "/category";
 
     @Override
-    public List<CategoryDto> findCategories(Long from, Long size, HttpServletRequest request) {
+    public List<CategoryDto> getCategories(Long from, Long size, HttpServletRequest request) {
         log.info("PublicCategoryService: выгрузка категорий по заданным параметрам:");
         List<Category> categoryList = categoryRepository.findCategories(from, size);
         log.info("{}", categoryList);
@@ -44,7 +44,7 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
     }
 
     @Override
-    public CategoryDto findById(Long catId, HttpServletRequest request) {
+    public CategoryDto getById(Long catId, HttpServletRequest request) {
         log.info("PublicCategoryService: поиск категории с переданным id:");
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException(String.format("Категория с id: %d не найдена", catId)));

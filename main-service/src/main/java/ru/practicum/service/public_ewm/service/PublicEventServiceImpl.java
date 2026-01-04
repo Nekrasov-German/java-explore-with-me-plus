@@ -15,6 +15,7 @@ import ru.practicum.service.dto.EventFullDto;
 import ru.practicum.service.dto.EventShortDto;
 import ru.practicum.service.dto.EventSort;
 import ru.practicum.service.error.NotFoundException;
+import ru.practicum.service.mapper.EventMapper;
 import ru.practicum.service.model.Event;
 import ru.practicum.service.public_ewm.mapper.PublicEventMapper;
 
@@ -55,7 +56,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         List<String> eventsUrisList = eventsList.stream().map(event -> URI_EVENT_ENDPOINT + event.getId()).toList();
 
         log.info("PublicEventService: Выгрузка статистики по найденным ивентам");
-        List<HitsCounterResponseDto> hitsCounterList = statClient.getHits(rangeStart, rangeEnd, eventsUrisList, true);
+        List<HitsCounterResponseDto> hitsCounterList = statClient.getHits(rangeStart, rangeEnd, eventsUrisList, false);
         log.info("PublicEventService: {}", hitsCounterList);
         Map<Long, Long> eventIdEventHits =  hitsCounterList.stream()
                 .collect(Collectors.toMap(hitsCounter ->
@@ -88,7 +89,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         List<HitsCounterResponseDto> hitsCounter = statClient.getHits(VERY_PAST,
                 LocalDateTime.now(),
                 List.of(URI_EVENT_ENDPOINT + event.getId()),
-                true);
+                false);
         Long views = hitsCounter.isEmpty() ? 0L : hitsCounter.getFirst().getHits();
 
         statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
@@ -97,7 +98,10 @@ public class PublicEventServiceImpl implements PublicEventService {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
         );
 
-        return PublicEventMapper.toEventFullDto(event, views);
+        EventFullDto efd = EventMapper.eventToEventFullDto(event);
+        efd.setViews(views);
+
+        return efd;
     }
 
 
