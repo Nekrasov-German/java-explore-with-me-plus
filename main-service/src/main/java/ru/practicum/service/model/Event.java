@@ -55,6 +55,7 @@ public class Event {
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
+    @Builder.Default
     private Boolean paid = false;
 
     @Column(name = "participant_limit")
