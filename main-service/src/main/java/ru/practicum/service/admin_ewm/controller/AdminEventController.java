@@ -25,7 +25,7 @@ public class AdminEventController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<EventFullDto> getEvents(
-            @RequestParam @Valid AdminEventParam params
+            @Valid @ModelAttribute AdminEventParam params
     ) {
         log.info("GET /admin/events c параметрами: " +
                 "users={}, states={}, categories={}, rangeStart={}, rangeEnd={}, from={}, size={}",

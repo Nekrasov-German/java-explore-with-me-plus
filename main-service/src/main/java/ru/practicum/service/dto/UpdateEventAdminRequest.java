@@ -44,11 +44,11 @@ public class UpdateEventAdminRequest {
     @Size(min = 3, max = 120)
     String title;
 
-    /*@AssertTrue(message = "Дата начала события должна быть не ранее чем за час от даты публикации")
+    @AssertTrue(message = "Дата начала события должна быть не ранее чем за час от даты публикации")
     public boolean isValidEventDate() {
         if (eventDate == null) {
             return true;
         }
-        return eventDate.isBefore(LocalDateTime.now().plusHours(1));
-    }*/
+        return !eventDate.isBefore(LocalDateTime.now().plusHours(1));
+    }
 }
