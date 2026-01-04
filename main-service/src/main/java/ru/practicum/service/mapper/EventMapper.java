@@ -22,7 +22,20 @@ public class EventMapper {
                 .initiatorDto(UserMapper.toUserShortDto(event.getInitiator()))
                 .paid(event.getPaid())
                 .title(event.getTitle())
-                //.views()                             ??????????
+                .build();
+    }
+
+    public EventShortDto toEventShortDto(Event event, Long views) {
+        return EventShortDto.builder()
+                .annotation(event.getAnnotation())
+                .categoryDto(CategoryMapper.toCategoryDto(event.getCategory()))
+                .confirmedRequests(event.getConfirmedRequests())
+                .eventDate(event.getEventDate())
+                .id(event.getId())
+                .initiatorDto(UserMapper.toUserShortDto(event.getInitiator()))
+                .paid(event.getPaid())
+                .title(event.getTitle())
+                .views(views)
                 .build();
     }
 
@@ -83,5 +96,26 @@ public class EventMapper {
         }
 
         return event;
+    }
+
+    public EventFullDto toEventFullDto(Event event, Long views) {
+        return EventFullDto.builder()
+                .annotation(event.getAnnotation())
+                .categoryDto(CategoryMapper.toCategoryDto(event.getCategory()))
+                .eventDate(event.getEventDate())
+                .confirmedRequests(event.getConfirmedRequests())
+                .createdOn(event.getCreatedOn())
+                .description(event.getDescription())
+                .locationDto(LocationMapper.locationToLocationDto(event.getLocation()))
+                .initiatorDto(UserMapper.toUserShortDto(event.getInitiator()))
+                .state(event.getState())
+                .id(event.getId())
+                .paid(event.getPaid())
+                .participantLimit(event.getParticipantLimit())
+                .publishedOn(event.getPublishedOn())
+                .requestModeration(event.getRequestModeration())
+                .title(event.getTitle())
+                .views(views)
+                .build();
     }
 }
