@@ -15,6 +15,7 @@ import ru.practicum.service.dto.EventFullDto;
 import ru.practicum.service.dto.EventShortDto;
 import ru.practicum.service.dto.EventSort;
 import ru.practicum.service.error.NotFoundException;
+import ru.practicum.service.mapper.EventMapper;
 import ru.practicum.service.model.Event;
 import ru.practicum.service.public_ewm.mapper.PublicEventMapper;
 
@@ -97,7 +98,10 @@ public class PublicEventServiceImpl implements PublicEventService {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
         );
 
-        return PublicEventMapper.toEventFullDto(event, views);
+        EventFullDto efd = EventMapper.eventToEventFullDto(event);
+        efd.setViews(views);
+
+        return efd;
     }
 
 
