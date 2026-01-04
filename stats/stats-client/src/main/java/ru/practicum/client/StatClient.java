@@ -36,14 +36,19 @@ public class StatClient {
             List<String> uris,
             Boolean unique
     ) {
+        String urisParam = (uris != null && !uris.isEmpty())
+                ? String.join(",", uris)
+                : null;
+
         return restClient.get()
-                .uri(STATS_ENDPOINT +
-                                "?start={start}&end={end}&unique={unique}" +
-                                (uris != null ? "&uris={uris}" : ""),
-                        start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        unique,
-                        uris
+                .uri(uriBuilder -> uriBuilder
+                        .path(STATS_ENDPOINT)
+                        .queryParam("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .queryParam("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .queryParam("unique", unique)
+                        // Добавляем uris только если они есть
+                        .queryParam("uris", urisParam)
+                        .build()
                 )
                 .retrieve()
                 .body(new org.springframework.core.ParameterizedTypeReference<List<HitsCounterResponseDto>>() {});
@@ -55,14 +60,20 @@ public class StatClient {
     ) {
         LocalDateTime start = VERY_PAST;
         LocalDateTime end = LocalDateTime.now();
+
+        String urisParam = (uris != null && !uris.isEmpty())
+                ? String.join(",", uris)
+                : null;
+
         return restClient.get()
-                .uri(STATS_ENDPOINT +
-                                "?start={start}&end={end}&unique={unique}" +
-                                (uris != null ? "&uris={uris}" : ""),
-                        start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        unique,
-                        uris
+                .uri(uriBuilder -> uriBuilder
+                        .path(STATS_ENDPOINT)
+                        .queryParam("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .queryParam("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .queryParam("unique", unique)
+                        // Добавляем uris только если они есть
+                        .queryParam("uris", urisParam)
+                        .build()
                 )
                 .retrieve()
                 .body(new org.springframework.core.ParameterizedTypeReference<List<HitsCounterResponseDto>>() {});
@@ -74,14 +85,19 @@ public class StatClient {
             Boolean unique
     ) {
         LocalDateTime end = LocalDateTime.now();
+        String urisParam = (uris != null && !uris.isEmpty())
+                ? String.join(",", uris)
+                : null;
+
         return restClient.get()
-                .uri(STATS_ENDPOINT +
-                                "?start={start}&end={end}&unique={unique}" +
-                                (uris != null ? "&uris={uris}" : ""),
-                        start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        unique,
-                        uris
+                .uri(uriBuilder -> uriBuilder
+                        .path(STATS_ENDPOINT)
+                        .queryParam("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .queryParam("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .queryParam("unique", unique)
+                        // Добавляем uris только если они есть
+                        .queryParam("uris", urisParam)
+                        .build()
                 )
                 .retrieve()
                 .body(new org.springframework.core.ParameterizedTypeReference<List<HitsCounterResponseDto>>() {});
