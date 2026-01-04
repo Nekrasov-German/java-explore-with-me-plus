@@ -56,7 +56,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         List<String> eventsUrisList = eventsList.stream().map(event -> URI_EVENT_ENDPOINT + event.getId()).toList();
 
         log.info("PublicEventService: Выгрузка статистики по найденным ивентам");
-        List<HitsCounterResponseDto> hitsCounterList = statClient.getHits(rangeStart, rangeEnd, eventsUrisList, true);
+        List<HitsCounterResponseDto> hitsCounterList = statClient.getHits(rangeStart, rangeEnd, eventsUrisList, false);
         log.info("PublicEventService: {}", hitsCounterList);
         Map<Long, Long> eventIdEventHits =  hitsCounterList.stream()
                 .collect(Collectors.toMap(hitsCounter ->
@@ -89,7 +89,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         List<HitsCounterResponseDto> hitsCounter = statClient.getHits(VERY_PAST,
                 LocalDateTime.now(),
                 List.of(URI_EVENT_ENDPOINT + event.getId()),
-                true);
+                false);
         Long views = hitsCounter.isEmpty() ? 0L : hitsCounter.getFirst().getHits();
 
         statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
