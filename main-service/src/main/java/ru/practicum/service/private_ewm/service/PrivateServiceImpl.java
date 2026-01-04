@@ -56,7 +56,7 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
-    public EventFullDto createEvent(Long userId, NewEventDto newEventDto, HttpServletRequest request) { //TODO проверить нужны ли просмотры т.к. только создано
+    public EventFullDto createEvent(Long userId, NewEventDto newEventDto, HttpServletRequest request) {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException("Время события должно быть за два часа до события.");
         }
@@ -69,16 +69,8 @@ public class PrivateServiceImpl implements PrivateService {
 
 
         Event event = eventRepository.save(EventMapper.newEventDtoToEvent(newEventDto, user, category));
-        EventFullDto eventFullDto = EventMapper.eventToEventFullDto(event);
 
-//        List<HitsCounterResponseDto> hitsCounter = client.getHits(VERY_PAST,
-//                LocalDateTime.now(),
-//                List.of(request.getRequestURI()),
-//                true);
-//        Long views = hitsCounter.isEmpty() ? 0L : hitsCounter.getFirst().getHits();
-//
-//        eventFullDto.setViews(views);
-        return eventFullDto;
+        return EventMapper.eventToEventFullDto(event);
     }
 
     @Override
@@ -99,7 +91,7 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
-    public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) { //TODO проверить нужны ли просмотры т.к. только обновлено
+    public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Такого события не найдено."));
         userRepository.findById(userId)
@@ -107,8 +99,10 @@ public class PrivateServiceImpl implements PrivateService {
         if (event.getState().equals(State.PUBLISHED)) {
             throw new ConflictException("Данное событие нельзя изменить.");
         }
-        Optional<Category> category = categoryRepository.findById(updateEventUserRequest.getCategoryId());
-
+        Optional<Category> category = Optional.empty();
+        if (updateEventUserRequest.getCategoryId() != null) {
+            category = categoryRepository.findById(updateEventUserRequest.getCategoryId());
+        }
         Event updateEvent = eventRepository
                 .save(EventMapper.UpdateEventDtoToEvent(event, updateEventUserRequest, category));
 
@@ -117,7 +111,14 @@ public class PrivateServiceImpl implements PrivateService {
 
     @Override
     public List<ParticipationRequestDto> getInfoRequest(Long userId, Long eventId) {
-        return List.of();
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ValidationException("Событие не найдено"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ValidationException("Пользователь не найден"));
+
+        return requestRepository.findAllByEvent(event).stream()
+                .map(RequestMapper::toRequestDto)
+                .toList();
     }
 
     @Override

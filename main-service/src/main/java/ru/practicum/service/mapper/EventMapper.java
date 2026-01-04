@@ -2,6 +2,7 @@ package ru.practicum.service.mapper;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.service.dto.*;
+import ru.practicum.service.dto.enums.UserStateAction;
 import ru.practicum.service.model.Category;
 import ru.practicum.service.model.Event;
 import ru.practicum.service.model.User;
@@ -73,9 +74,12 @@ public class EventMapper {
         if (locationDto != null) {
             event.setLocation(LocationMapper.locationDtoToLocation(locationDto));
         }
-        State state = update.getStateAction();
-        if (state != null) {
-            event.setState(state);
+        UserStateAction state = update.getStateAction();
+        if (state.equals(UserStateAction.CANCEL_REVIEW)) {
+            event.setState(State.CANCELED);
+        }
+        if (state.equals(UserStateAction.SEND_TO_REVIEW)) {
+            event.setState(State.PENDING);
         }
 
         return event;
