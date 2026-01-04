@@ -1,9 +1,6 @@
 package ru.practicum.service.admin_ewm.dto;
 
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 @Data
@@ -24,10 +22,12 @@ public class AdminEventParam {
     private List<Long> categories;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime rangeStart;
+    @Builder.Default
+    LocalDateTime rangeStart = LocalDateTime.of(2000, Month.JANUARY, 1, 0, 0, 0);
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime rangeEnd;
+    @Builder.Default
+    LocalDateTime rangeEnd =  LocalDateTime.of(2099, Month.JANUARY, 31, 23, 59, 59);
 
     @Min(value = 0, message = "Параметр 'from' не может быть отрицательным")
     @Builder.Default
