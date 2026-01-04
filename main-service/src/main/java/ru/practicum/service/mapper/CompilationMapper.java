@@ -6,10 +6,7 @@ import ru.practicum.service.dto.EventShortDto;
 import ru.practicum.service.dto.NewCompilationDto;
 import ru.practicum.service.model.Compilation;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @UtilityClass
 public class CompilationMapper {
@@ -21,15 +18,7 @@ public class CompilationMapper {
                 .build();
     }
 
-    public CompilationDto toCompilationDto(Compilation compilation) {
-        Set<EventShortDto> eventsDto = Collections.emptySet();
-
-        if (compilation.getEvents() != null) {
-            eventsDto = compilation.getEvents().stream()
-                    .map(EventMapper::toEventShortDto)
-                    .collect(Collectors.toSet());
-        }
-
+    public CompilationDto toCompilationDto(Compilation compilation, Set<EventShortDto> eventsDto) {
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .pinned(compilation.getPinned())

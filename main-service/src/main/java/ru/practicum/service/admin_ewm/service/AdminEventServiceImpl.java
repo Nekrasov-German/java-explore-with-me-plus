@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.client.StatClient;
-import ru.practicum.dto.response.HitsCounterResponseDto;
 import ru.practicum.service.admin_ewm.dto.AdminEventParam;
+import ru.practicum.service.admin_ewm.statistics.StatisticsService;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dto.EventFullDto;
@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,6 +34,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
     private final StatClient  statClient;
+    private final StatisticsService  statisticsService;
 
     private final String URI_EVENT_ENDPOINT = "/events/";
 
@@ -53,12 +53,23 @@ public class AdminEventServiceImpl implements AdminEventService {
                 pageable
         );
 
-        return getEventFullDtoWithStatistics(events);
+        List<String> uris = events.stream()
+                .map(event -> URI_EVENT_ENDPOINT + event.getId())
+                .toList();
+
+        Map<String, Long> eventIdEventHits = statisticsService.getViewsByUris(uris, false);
+
+        return events.stream()
+                .map(event -> {
+                    Long views = eventIdEventHits.getOrDefault(URI_EVENT_ENDPOINT + event.getId(), 0L);
+                    return EventMapper.toEventFullDto(event, views);
+                })
+                .toList();
     }
 
     private List<State> convertStatesEnum(List<String> states) {
         if (states == null || states.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
         return states.stream()
                 .map(state -> {
@@ -67,33 +78,6 @@ public class AdminEventServiceImpl implements AdminEventService {
                     } catch (IllegalArgumentException e) {
                         throw new ValidationException("Некорректное состояние события " + state);
                     }
-                })
-                .toList();
-    }
-
-    private List<EventFullDto> getEventFullDtoWithStatistics(List<Event> events) {
-        if (events.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<String> uris = events.stream()
-                .map(event -> URI_EVENT_ENDPOINT + event.getId())
-                .toList();
-
-        List<HitsCounterResponseDto> stats = statClient.getHits(uris, false);
-
-        Map<String, Long> eventIdEventHits = stats.stream()
-                .collect(Collectors.toMap(
-                        HitsCounterResponseDto::getUri,
-                        HitsCounterResponseDto::getHits
-                ));
-
-        return events.stream()
-                .map(event -> {
-                    EventFullDto dto = EventMapper.eventToEventFullDto(event);
-                    Long views = eventIdEventHits.getOrDefault(URI_EVENT_ENDPOINT + event.getId(), 0L);
-                    dto.setViews(views);
-                    return dto;
                 })
                 .toList();
     }
@@ -123,11 +107,11 @@ public class AdminEventServiceImpl implements AdminEventService {
 
         updateEventFields(event, request);
         Event updatedEvent = eventRepository.save(event);
-        EventFullDto dto = EventMapper.eventToEventFullDto(updatedEvent);
-        Long views = getEventViews(updatedEvent.getId());
-        dto.setViews(views);
 
-        return dto;
+        String uri = URI_EVENT_ENDPOINT + updatedEvent.getId();
+        Long views = statisticsService.getViewsByUri(uri,false);
+
+        return EventMapper.toEventFullDto(updatedEvent, views);
     }
 
     private void updateEventFields(Event event, UpdateEventAdminRequest request) {
@@ -172,20 +156,5 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (request.getTitle() != null) {
             event.setTitle(request.getTitle());
         }
-    }
-
-    private Long getEventViews(Long eventId) {
-        String uri = URI_EVENT_ENDPOINT + eventId;
-
-        List<HitsCounterResponseDto> stats = statClient.getHits(
-                List.of(uri),
-                false
-        );
-
-        return stats.stream()
-                .filter(dto -> dto.getUri().equals(uri))
-                .map(HitsCounterResponseDto::getHits)
-                .findFirst()
-                .orElse(0L);
     }
 }
