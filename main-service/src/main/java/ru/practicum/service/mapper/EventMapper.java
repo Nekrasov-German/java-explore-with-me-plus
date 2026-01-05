@@ -88,10 +88,13 @@ public class EventMapper {
             event.setLocation(LocationMapper.locationDtoToLocation(locationDto));
         }
         UserStateAction state = update.getStateAction();
-        if (state.equals(UserStateAction.CANCEL_REVIEW)) {
+        if (UserStateAction.CANCEL_REVIEW.equals(state)) {
             event.setState(State.CANCELED);
         }
-        if (state.equals(UserStateAction.SEND_TO_REVIEW)) {
+        if (UserStateAction.SEND_TO_REVIEW.equals(state)) {
+            event.setState(State.PENDING);
+        }
+        if (state == null) {
             event.setState(State.PENDING);
         }
 

@@ -3,6 +3,7 @@ package ru.practicum.service.error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -83,6 +84,18 @@ public class ErrorHandler {
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .reason("Ошибка валидации")
                 .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class) //TODO test
+    public ApiError handleMissingParam(final MissingServletRequestParameterException ex) {
+        log.error("400 {}", ex.getMessage(), ex);
+        return ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.toString())
+                .reason("Ошибка валидации")
+                .message(ex.getMessage())
                 .timestamp(LocalDateTime.now().format(FORMATTER))
                 .build();
     }

@@ -1,11 +1,13 @@
 package ru.practicum.service.private_ewm.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.service.dto.*;
 import ru.practicum.service.private_ewm.service.PrivateService;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping(path = "/users/{userId}/events")
 public class PrivateEventsController {
@@ -29,7 +32,7 @@ public class PrivateEventsController {
 
     @PostMapping
     public ResponseEntity<EventFullDto> createEvent(@PathVariable(value = "userId") Long userId,
-                                                    @RequestBody NewEventDto newEventDto,
+                                                    @Valid @RequestBody NewEventDto newEventDto,
                                                     HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createEvent(userId, newEventDto, request));
     }
@@ -44,21 +47,21 @@ public class PrivateEventsController {
     @PatchMapping("/{eventId}")
     public ResponseEntity<EventFullDto> updateEvent(@PathVariable(value = "userId") Long userId,
                                                     @PathVariable(value = "eventId") Long eventId,
-                                                    @RequestBody UpdateEventUserRequest updateEventUserRequest) {
+                                                    @Valid @RequestBody UpdateEventUserRequest updateEventUserRequest) {
         return ResponseEntity.ok().body(service.updateEvent(userId, eventId, updateEventUserRequest));
     }
 
-    @GetMapping("/{eventId}/request")
+    @GetMapping("/{eventId}/requests")
     public ResponseEntity<List<ParticipationRequestDto>> getInfoRequest(@PathVariable(value = "userId") Long userId,
                                                                   @PathVariable(value = "eventId") Long eventId) {
         return ResponseEntity.ok().body(service.getInfoRequest(userId, eventId));
     }
 
-    @PatchMapping("/{eventId}/request")
+    @PatchMapping("/{eventId}/requests")
     public ResponseEntity<EventRequestStatusUpdateResult> updateStatusRequest(
             @PathVariable(value = "userId") Long userId,
             @PathVariable(value = "eventId") Long eventId,
-            @RequestBody EventRequestStatusUpdateRequest updateRequest) {
+            @Valid @RequestBody EventRequestStatusUpdateRequest updateRequest) {
         return ResponseEntity.ok().body(service.updateStatusRequest(userId, eventId, updateRequest));
     }
 
