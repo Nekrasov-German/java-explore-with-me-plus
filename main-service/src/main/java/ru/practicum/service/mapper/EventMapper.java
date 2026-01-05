@@ -74,7 +74,7 @@ public class EventMapper {
                 .build();
     }
 
-    public Event UpdateEventDtoToEvent(Event event, UpdateEventUserRequest update, Optional<Category> category) {
+    public Event updateEventDtoToEvent(Event event, UpdateEventUserRequest update, Optional<Category> category) {
         Optional.ofNullable(update.getAnnotation()).ifPresent(event::setAnnotation);
         Optional.ofNullable(update.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(update.getTitle()).ifPresent(event::setTitle);

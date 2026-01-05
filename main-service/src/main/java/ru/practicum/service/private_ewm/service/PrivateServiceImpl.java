@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PrivateServiceImpl implements PrivateService {
     private static final Logger log = LoggerFactory.getLogger(PrivateServiceImpl.class);
-    private final String URI_EVENT_ENDPOINT = "/events/";
+    private static final String URI_EVENT_ENDPOINT = "/events/";
 
     private final StatClient client;
     private final StatisticsService statsService;
@@ -123,7 +123,7 @@ public class PrivateServiceImpl implements PrivateService {
             category = categoryRepository.findById(updateEventUserRequest.getCategoryId());
         }
         Event updateEvent = eventRepository
-                .save(EventMapper.UpdateEventDtoToEvent(event, updateEventUserRequest, category));
+                .save(EventMapper.updateEventDtoToEvent(event, updateEventUserRequest, category));
 
         return EventMapper.eventToEventFullDto(updateEvent);
     }
