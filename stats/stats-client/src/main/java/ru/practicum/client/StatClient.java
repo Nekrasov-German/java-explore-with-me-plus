@@ -19,7 +19,7 @@ public class StatClient {
 
     private static final String HIT_ENDPOINT = "/hit";
     private static final String STATS_ENDPOINT = "/stats";
-    private final LocalDateTime VERY_PAST = LocalDateTime.of(2000, 1, 1, 0, 0);
+    private static final LocalDateTime VERY_PAST = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     public ResponseEntity<Void> hit(StatHitRequestDto dto) {
         return restClient.post()
