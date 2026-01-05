@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.service.admin_ewm.dto.AdminEventParam;
-import ru.practicum.service.admin_ewm.statistics.StatisticsService;
+import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dto.EventFullDto;
@@ -22,7 +22,6 @@ import ru.practicum.service.model.Location;
 import ru.practicum.service.model.enums.State;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

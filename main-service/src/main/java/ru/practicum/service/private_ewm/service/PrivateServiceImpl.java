@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.response.HitsCounterResponseDto;
-import ru.practicum.service.admin_ewm.statistics.StatisticsService;
+import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dal.RequestRepository;

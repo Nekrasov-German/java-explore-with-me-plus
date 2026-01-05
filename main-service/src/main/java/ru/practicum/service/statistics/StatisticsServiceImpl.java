@@ -1,4 +1,4 @@
-package ru.practicum.service.admin_ewm.statistics;
+package ru.practicum.service.statistics;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

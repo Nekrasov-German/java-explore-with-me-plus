@@ -3,7 +3,7 @@ package ru.practicum.service.admin_ewm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.service.admin_ewm.statistics.StatisticsService;
+import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CompilationRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dto.CompilationDto;
