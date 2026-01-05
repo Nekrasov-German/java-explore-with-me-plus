@@ -63,7 +63,7 @@ public class PublicEventServiceImpl implements PublicEventService {
                         PublicEventMapper.extractIdFromUri(hitsCounter.getUri()), HitsCounterResponseDto::getHits));
 
         List<EventShortDto> result = eventsList.stream()
-                .map(event -> PublicEventMapper.toEventShortDto(event, eventIdEventHits.getOrDefault(event.getId(), 0L)))
+                .map(event -> EventMapper.toEventShortDto(event, eventIdEventHits.getOrDefault(event.getId(), 0L)))
                 .toList();
 
         if (sort == EventSort.VIEWS) result = result.stream()
@@ -98,10 +98,7 @@ public class PublicEventServiceImpl implements PublicEventService {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
         );
 
-        EventFullDto efd = EventMapper.eventToEventFullDto(event);
-        efd.setViews(views);
-
-        return efd;
+		return EventMapper.toEventFullDto(event, views);
     }
 
 

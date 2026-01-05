@@ -12,6 +12,7 @@ import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dto.CategoryDto;
 import ru.practicum.service.dto.Constant;
 import ru.practicum.service.error.NotFoundException;
+import ru.practicum.service.mapper.CategoryMapper;
 import ru.practicum.service.model.Category;
 import ru.practicum.service.public_ewm.mapper.PublicCategoryMapper;
 
@@ -40,7 +41,7 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
         );
 
-        return categoryList.stream().map(PublicCategoryMapper::toCategoryDto).toList();
+        return categoryList.stream().map(CategoryMapper::toCategoryDto).toList();
     }
 
     @Override
@@ -56,6 +57,6 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
         );
 
-        return PublicCategoryMapper.toCategoryDto(category);
+        return CategoryMapper.toCategoryDto(category);
     }
 }
