@@ -5,6 +5,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.request.StatHitRequestDto;
@@ -51,7 +56,8 @@ public class PublicEventServiceImpl implements PublicEventService {
         if (rangeEnd == null) rangeEnd = LocalDateTime.now().plusYears(1000);
 
         log.info("PublicEventService: Поиск ивентов с заданными параметрами");
-        List<Event> eventsList = eventRepository.findPublicEventsNative(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, from, size);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Event> eventsList = eventRepository.findPublicEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, pageable);
         log.info("PublicEventService: {}", eventsList);
         List<String> eventsUrisList = eventsList.stream().map(event -> URI_EVENT_ENDPOINT + event.getId()).toList();
 
@@ -82,21 +88,22 @@ public class PublicEventServiceImpl implements PublicEventService {
     @Override
     public EventFullDto getById(Long id, HttpServletRequest request) {
         log.info("PublicEventService: Поиск ивента с переданным id: {}", id);
-        Event event = eventRepository.findById(id)
+        Event event = eventRepository.findPublishedById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Событие с id: %d не найдено", id)));
 
         log.info("PublicEventService: Выгрузка статистики по найденному ивенту");
-        List<HitsCounterResponseDto> hitsCounter = statClient.getHits(VERY_PAST,
-                LocalDateTime.now(),
-                List.of(URI_EVENT_ENDPOINT + event.getId()),
-                false);
-        Long views = hitsCounter.isEmpty() ? 0L : hitsCounter.getFirst().getHits();
 
         statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
                 request.getRequestURI(),
                 request.getRemoteAddr(),
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constant.DATE_TIME_FORMAT)))
         );
+
+        List<HitsCounterResponseDto> hitsCounter = statClient.getHits(VERY_PAST,
+                LocalDateTime.now(),
+                List.of(URI_EVENT_ENDPOINT + event.getId()),
+                true);
+        Long views = hitsCounter.isEmpty() ? 0L : hitsCounter.getFirst().getHits();
 
 		return EventMapper.toEventFullDto(event, views);
     }

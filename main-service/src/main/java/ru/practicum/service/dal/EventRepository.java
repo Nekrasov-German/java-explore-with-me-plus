@@ -10,38 +10,10 @@ import ru.practicum.service.model.enums.State;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
-    @Query(value = """
-                SELECT *
-                FROM events e
-                WHERE e.state = 'PUBLISHED'
-                AND (:text IS NULL
-                    OR LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%'))
-                    OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%'))
-                    )
-                AND (:paid IS NULL OR e.paid = :paid)
-                AND (:categories IS NULL OR e.category_id IN (:categories))
-                AND (:rangeStart IS NULL OR e.event_date >= :rangeStart)
-                AND (:rangeEnd IS NULL OR e.event_date <= :rangeEnd)
-                AND (:onlyAvailable = FALSE
-                    OR e.participant_limit = 0
-                    OR e.confirmed_requests < e.participant_limit
-                    )
-                ORDER BY e.event_date ASC
-                LIMIT :size OFFSET :from
-                """,
-            nativeQuery = true)
-    List<Event> findPublicEventsNative(@Param("text") String text,
-                                       @Param("categories") List<Long> categories,
-                                       @Param("paid") Boolean paid,
-                                       @Param("rangeStart") LocalDateTime rangeStart,
-                                       @Param("rangeEnd") LocalDateTime rangeEnd,
-                                       @Param("onlyAvailable") Boolean onlyAvailable,
-                                       @Param("from") Integer from,
-                                       @Param("size") Integer size);
-
     List<Event> findAllByIdIn(Set<Long> ids);
 
     Page<Event> findByInitiator_Id(Long userId, Pageable pageable);
@@ -60,4 +32,34 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
             Pageable pageable);
+
+    @Query("""
+        SELECT e
+        FROM Event e
+        WHERE e.state = ru.practicum.service.model.enums.State.PUBLISHED
+          AND (
+                :text IS NULL
+                OR LOWER(e.annotation) LIKE CONCAT('%', LOWER(CAST(:text AS string)), '%')
+                OR LOWER(e.description) LIKE CONCAT('%', LOWER(CAST(:text AS string)), '%')
+              )
+          AND (:paid IS NULL OR e.paid = :paid)
+          AND (:categories IS NULL OR e.category.id IN :categories)
+          AND e.eventDate >= :rangeStart
+          AND e.eventDate <= :rangeEnd
+          AND (:onlyAvailable = FALSE
+               OR e.participantLimit = 0
+               OR e.confirmedRequests < e.participantLimit)
+        ORDER BY e.eventDate ASC
+        """)
+    List<Event> findPublicEvents(@Param("text") String text,
+                                 @Param("categories") List<Long> categories,
+                                 @Param("paid") Boolean paid,
+                                 @Param("rangeStart") LocalDateTime rangeStart,
+                                 @Param("rangeEnd") LocalDateTime rangeEnd,
+                                 @Param("onlyAvailable") Boolean onlyAvailable,
+                                 Pageable pageable);
+
+    @Query("SELECT e FROM Event e WHERE e.id = :id AND e.state = 'PUBLISHED'")
+    Optional<Event> findPublishedById(@Param("id") Long id);
+
 }
