@@ -40,7 +40,8 @@ public class AdminEventServiceImpl implements AdminEventService {
     public List<EventFullDto> getFullEvents(AdminEventParam params) {
         List<State> states = convertStatesEnum(params.getStates());
 
-        Pageable pageable = PageRequest.of(params.getFrom(), params.getSize());
+        int pageNumber = params.getFrom() / params.getSize();
+        Pageable pageable = PageRequest.of(pageNumber, params.getSize());
 
         List<Event> events = eventRepository.findEventByAdmin(
                 params.getUsers(),
@@ -67,7 +68,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     private List<State> convertStatesEnum(List<String> states) {
         if (states == null || states.isEmpty()) {
-            return Collections.emptyList();
+            return null;
         }
         return states.stream()
                 .map(state -> {
