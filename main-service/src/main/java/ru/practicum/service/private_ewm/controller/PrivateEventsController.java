@@ -1,6 +1,5 @@
 package ru.practicum.service.private_ewm.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -32,16 +31,14 @@ public class PrivateEventsController {
 
     @PostMapping
     public ResponseEntity<EventFullDto> createEvent(@PathVariable(value = "userId") Long userId,
-                                                    @Valid @RequestBody NewEventDto newEventDto,
-                                                    HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createEvent(userId, newEventDto, request));
+                                                    @Valid @RequestBody NewEventDto newEventDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createEvent(userId, newEventDto));
     }
 
     @GetMapping("/{eventId}")
     public ResponseEntity<EventFullDto> getInfoEvent(@PathVariable(value = "userId") Long userId,
-                                                     @PathVariable(value = "eventId") Long eventId,
-                                                     HttpServletRequest request) {
-        return ResponseEntity.ok().body(service.getInfoEvent(userId, eventId, request));
+                                                     @PathVariable(value = "eventId") Long eventId) {
+        return ResponseEntity.ok().body(service.getInfoEvent(userId, eventId));
     }
 
     @PatchMapping("/{eventId}")

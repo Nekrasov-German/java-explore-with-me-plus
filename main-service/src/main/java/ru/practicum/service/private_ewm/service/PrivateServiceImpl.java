@@ -1,6 +1,5 @@
 package ru.practicum.service.private_ewm.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.response.HitsCounterResponseDto;
+import ru.practicum.service.admin_ewm.statistics.StatisticsService;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dal.RequestRepository;
@@ -28,37 +28,55 @@ import ru.practicum.service.model.enums.State;
 import ru.practicum.service.model.enums.Status;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PrivateServiceImpl implements PrivateService {
     private static final Logger log = LoggerFactory.getLogger(PrivateServiceImpl.class);
+    private final String URI_EVENT_ENDPOINT = "/events/";
 
     private final StatClient client;
+    private final StatisticsService statsService;
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
 
+    private Map<String, Long> getViewsForEvents(List<EventShortDto> events) {
+        if (events.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        List<String> uris = events.stream()
+                .map(dto -> URI_EVENT_ENDPOINT + dto.getId())
+                .collect(Collectors.toList());
+        return statsService.getViewsByUris(uris, false);
+    }
 
     @Override
-    public List<EventShortDto> getEventsByOwner(Long userId, Long from, Long size) { //TODO добавить просмотры
+    public List<EventShortDto> getEventsByOwner(Long userId, Long from, Long size) {
         int page = from.intValue() / size.intValue();
         Pageable pageable = PageRequest.of(page, size.intValue());
 
         Page<Event> eventPage = eventRepository.findByInitiator_Id(userId, pageable);
-        return eventPage.getContent().stream()
+        List<EventShortDto> dtos = eventPage.getContent().stream()
                 .map(EventMapper::toEventShortDto)
                 .collect(Collectors.toList());
+
+        Map<String, Long> viewsMap = getViewsForEvents(dtos);
+
+        dtos.forEach(dto -> {
+            String uriKey = URI_EVENT_ENDPOINT + dto.getId();
+            Long views = viewsMap.getOrDefault(uriKey, 0L);
+            dto.setViews(views);
+        });
+
+        return dtos;
     }
 
     @Override
-    public EventFullDto createEvent(Long userId, NewEventDto newEventDto, HttpServletRequest request) {
+    public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException("Время события должно быть за два часа до события.");
         }
@@ -69,14 +87,13 @@ public class PrivateServiceImpl implements PrivateService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Такого пользователя не существует."));
 
-
         Event event = eventRepository.save(EventMapper.newEventDtoToEvent(newEventDto, user, category));
 
         return EventMapper.eventToEventFullDto(event);
     }
 
     @Override
-    public EventFullDto getInfoEvent(Long userId, Long eventId, HttpServletRequest request) {
+    public EventFullDto getInfoEvent(Long userId, Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Такого события не найдено."));
         userRepository.findById(userId)
@@ -84,7 +101,7 @@ public class PrivateServiceImpl implements PrivateService {
         EventFullDto eventFullDto = EventMapper.eventToEventFullDto(event);
 
         List<HitsCounterResponseDto> hitsCounter = client.getHits(
-                List.of(request.getRequestURI()),
+                List.of(URI_EVENT_ENDPOINT + eventFullDto.getId()),
                 true);
         Long views = hitsCounter.isEmpty() ? 0L : hitsCounter.getFirst().getHits();
 
@@ -239,7 +256,7 @@ public class PrivateServiceImpl implements PrivateService {
             throw new ConflictException("нельзя участвовать в неопубликованном событии.");
         }
 
-        long confirmedRequest = event.getConfirmedRequests(); //TODO test
+        long confirmedRequest = event.getConfirmedRequests();
         if (event.getParticipantLimit() != 0 && event.getParticipantLimit() == confirmedRequest) {
             throw new ConflictException("у события достигнут лимит запросов на участие");
         }

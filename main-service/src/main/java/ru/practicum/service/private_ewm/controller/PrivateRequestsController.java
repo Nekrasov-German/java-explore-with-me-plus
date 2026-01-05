@@ -1,7 +1,6 @@
 package ru.practicum.service.private_ewm.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,11 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.service.dto.ParticipationRequestDto;
-import ru.practicum.service.error.ValidationException;
 import ru.practicum.service.private_ewm.service.PrivateService;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
