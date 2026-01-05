@@ -17,11 +17,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventFullDto {
-    @NotBlank
-    @Size(min = 20, max = 2000)
+    @NotBlank(message = "Поле 'annotation' не может быть пустым")
     String annotation;
 
-    @NotNull
+    @NotNull(message = "Поле 'category' не может быть null")
     @JsonProperty(value = "category")
     CategoryDto categoryDto;
 
@@ -30,24 +29,23 @@ public class EventFullDto {
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     LocalDateTime createdOn;
 
-    @Size(min = 20, max = 7000)
     String description;
 
-    @NotNull
+    @NotNull(message = "Поле 'eventDate' не может быть null")
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     LocalDateTime eventDate;
 
     Long id;
 
-    @NotNull
+    @NotNull(message = "Поле 'initiator' не может быть null")
     @JsonProperty(value = "initiator")
     UserShortDto initiatorDto;
 
-    @NotNull
+    @NotNull(message = "Поле 'location' не может быть null")
     @JsonProperty(value = "location")
     LocationDto locationDto;
 
-    @NotNull
+    @NotNull(message = "Поле 'paid' не может быть null")
     Boolean paid;
 
     Integer participantLimit;
@@ -59,8 +57,7 @@ public class EventFullDto {
 
     State state;
 
-    @NotBlank
-    @Size(min = 3, max = 120)
+    @NotBlank(message = "Поле 'title' не может быт пустым")
     String title;
 
     Long views;
