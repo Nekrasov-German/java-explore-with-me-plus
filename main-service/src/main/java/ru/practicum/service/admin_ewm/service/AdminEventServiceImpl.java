@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.client.StatClient;
 import ru.practicum.service.admin_ewm.dto.AdminEventParam;
 import ru.practicum.service.admin_ewm.statistics.StatisticsService;
 import ru.practicum.service.dal.CategoryRepository;
@@ -33,7 +32,6 @@ import java.util.Map;
 public class AdminEventServiceImpl implements AdminEventService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
-    private final StatClient  statClient;
     private final StatisticsService  statisticsService;
 
     private final String URI_EVENT_ENDPOINT = "/events/";
@@ -57,11 +55,11 @@ public class AdminEventServiceImpl implements AdminEventService {
                 .map(event -> URI_EVENT_ENDPOINT + event.getId())
                 .toList();
 
-        Map<String, Long> eventIdEventHits = statisticsService.getViewsByUris(uris, false);
+        Map<String, Long> eventHits = statisticsService.getViewsByUris(uris, false);
 
         return events.stream()
                 .map(event -> {
-                    Long views = eventIdEventHits.getOrDefault(URI_EVENT_ENDPOINT + event.getId(), 0L);
+                    Long views = eventHits.getOrDefault(URI_EVENT_ENDPOINT + event.getId(), 0L);
                     return EventMapper.toEventFullDto(event, views);
                 })
                 .toList();
@@ -76,7 +74,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                     try {
                         return State.valueOf(state.toUpperCase());
                     } catch (IllegalArgumentException e) {
-                        throw new ValidationException("Некорректное состояние события " + state);
+                        throw new ValidationException("Некорректное состояние события: " + state);
                     }
                 })
                 .toList();
@@ -108,7 +106,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         updateEventFields(event, request);
         Event updatedEvent = eventRepository.save(event);
 
-        String uri = URI_EVENT_ENDPOINT + updatedEvent.getId();
+        String uri = URI_EVENT_ENDPOINT + event.getId();
         Long views = statisticsService.getViewsByUri(uri,false);
 
         return EventMapper.toEventFullDto(updatedEvent, views);
