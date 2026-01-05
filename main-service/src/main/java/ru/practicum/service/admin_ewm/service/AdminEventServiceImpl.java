@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.service.admin_ewm.dto.AdminEventParam;
-import ru.practicum.service.admin_ewm.statistics.StatisticsService;
+import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dto.EventFullDto;
@@ -22,7 +22,6 @@ import ru.practicum.service.model.Location;
 import ru.practicum.service.model.enums.State;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +39,8 @@ public class AdminEventServiceImpl implements AdminEventService {
     public List<EventFullDto> getFullEvents(AdminEventParam params) {
         List<State> states = convertStatesEnum(params.getStates());
 
-        Pageable pageable = PageRequest.of(params.getFrom(), params.getSize());
+        int pageNumber = params.getFrom() / params.getSize();
+        Pageable pageable = PageRequest.of(pageNumber, params.getSize());
 
         List<Event> events = eventRepository.findEventByAdmin(
                 params.getUsers(),
@@ -67,7 +67,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     private List<State> convertStatesEnum(List<String> states) {
         if (states == null || states.isEmpty()) {
-            return Collections.emptyList();
+            return null;
         }
         return states.stream()
                 .map(state -> {

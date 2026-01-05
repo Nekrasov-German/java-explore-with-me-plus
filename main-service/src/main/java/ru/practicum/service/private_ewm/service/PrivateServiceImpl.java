@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.response.HitsCounterResponseDto;
-import ru.practicum.service.admin_ewm.statistics.StatisticsService;
+import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dal.RequestRepository;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PrivateServiceImpl implements PrivateService {
     private static final Logger log = LoggerFactory.getLogger(PrivateServiceImpl.class);
-    private final String URI_EVENT_ENDPOINT = "/events/";
+    private static final String URI_EVENT_ENDPOINT = "/events/";
 
     private final StatClient client;
     private final StatisticsService statsService;
@@ -123,7 +123,7 @@ public class PrivateServiceImpl implements PrivateService {
             category = categoryRepository.findById(updateEventUserRequest.getCategoryId());
         }
         Event updateEvent = eventRepository
-                .save(EventMapper.UpdateEventDtoToEvent(event, updateEventUserRequest, category));
+                .save(EventMapper.updateEventDtoToEvent(event, updateEventUserRequest, category));
 
         return EventMapper.eventToEventFullDto(updateEvent);
     }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.dto.response.HitsCounterResponseDto;
-import ru.practicum.service.admin_ewm.statistics.StatisticsService;
+import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CompilationRepository;
 import ru.practicum.service.dto.CompilationDto;
 import ru.practicum.service.dto.Constant;

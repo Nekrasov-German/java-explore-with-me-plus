@@ -1,4 +1,4 @@
-package ru.practicum.service.admin_ewm.statistics;
+package ru.practicum.service.statistics;
 
 import java.util.List;
 import java.util.Map;
