@@ -1,6 +1,7 @@
 package ru.practicum.service.public_ewm.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,8 @@ public class PublicCategoryController {
     final PublicCategoryService categoryService;
 
     @GetMapping
-    public List<CategoryDto> getCategoryByParam(@RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Long from,
-                                                @RequestParam(value = "size", defaultValue = "10") @PositiveOrZero Long size,
+    public List<CategoryDto> getCategoryByParam(@RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                                @RequestParam(value = "size", defaultValue = "10") @Positive Integer size,
                                                 HttpServletRequest request) {
         log.info("PublicCategoryController: вызов эндпоинта GET /category с параметрами -- from:{}, size:{}", from, size);
 

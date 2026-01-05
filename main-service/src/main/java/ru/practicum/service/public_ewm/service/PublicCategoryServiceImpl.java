@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.request.StatHitRequestDto;
@@ -30,9 +32,10 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
     final String URI_CATEGORY_ENDPOINT = "/category";
 
     @Override
-    public List<CategoryDto> getCategories(Long from, Long size, HttpServletRequest request) {
+    public List<CategoryDto> getCategories(Integer from, Integer size, HttpServletRequest request) {
         log.info("PublicCategoryService: выгрузка категорий по заданным параметрам:");
-        List<Category> categoryList = categoryRepository.findCategories(from, size);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Category> categoryList = categoryRepository.findAll(pageable).getContent();
         log.info("{}", categoryList);
 
         statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,

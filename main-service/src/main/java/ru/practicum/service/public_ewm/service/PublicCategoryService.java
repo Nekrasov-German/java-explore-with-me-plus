@@ -6,7 +6,7 @@ import ru.practicum.service.dto.CategoryDto;
 import java.util.List;
 
 public interface PublicCategoryService {
-    List<CategoryDto> getCategories(Long from, Long size, HttpServletRequest request);
+    List<CategoryDto> getCategories(Integer from, Integer size, HttpServletRequest request);
 
     CategoryDto getById(Long catId, HttpServletRequest request);
 }
