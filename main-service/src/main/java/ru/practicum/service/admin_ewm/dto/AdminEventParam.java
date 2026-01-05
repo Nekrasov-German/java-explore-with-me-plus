@@ -27,7 +27,7 @@ public class AdminEventParam {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Builder.Default
-    LocalDateTime rangeEnd =  LocalDateTime.of(2099, Month.JANUARY, 31, 23, 59, 59);
+    LocalDateTime rangeEnd =  LocalDateTime.of(2099, Month.DECEMBER, 31, 23, 59, 59);
 
     @Min(value = 0, message = "Параметр 'from' не может быть отрицательным")
     @Builder.Default

@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.service.dto.enums.AdminStateAction;
-import ru.practicum.service.error.ValidationException;
 
 import java.time.LocalDateTime;
 

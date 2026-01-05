@@ -3,6 +3,7 @@ package ru.practicum.service.admin_ewm.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import ru.practicum.service.dto.NewCategoryDto;
 @RequestMapping("/admin/categories")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class AdminCategoryController {
     private final AdminCategoryService service;
 
@@ -22,6 +24,7 @@ public class AdminCategoryController {
     public CategoryDto newCategory(
             @RequestBody @Valid NewCategoryDto dto
     ) {
+        log.info("POST admin/categories: {}", dto);
         return service.createCategory(dto);
     }
 
@@ -30,6 +33,7 @@ public class AdminCategoryController {
     public void deleteCategory(
             @PathVariable(name = "catId") @Positive Long catId
     ) {
+        log.info("DELETE admin/categories/{}", catId);
         service.deleteCategory(catId);
     }
 
@@ -39,6 +43,7 @@ public class AdminCategoryController {
             @PathVariable(name = "catId") @Positive Long catId,
             @RequestBody @Valid CategoryDto dto
     ) {
+        log.info("PATCH admin/categories/{}: {}", catId, dto);
         return service.updateCategory(catId, dto);
     }
 }
