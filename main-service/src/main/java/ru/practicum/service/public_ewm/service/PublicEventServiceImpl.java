@@ -34,8 +34,8 @@ import java.util.stream.Collectors;
 public class PublicEventServiceImpl implements PublicEventService {
     final EventRepository eventRepository;
     final StatClient statClient;
-    final static String URI_EVENT_ENDPOINT = "/events/";
-    final static LocalDateTime VERY_PAST = LocalDateTime.of(2000, 1, 1, 0, 0);
+    static final String URI_EVENT_ENDPOINT = "/events/";
+    static final LocalDateTime VERY_PAST = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     @Override
     public List<EventShortDto> getEvents(String text,
