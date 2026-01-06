@@ -3,7 +3,6 @@ package ru.practicum.stats.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.dto.response.HitsCounterResponseDto;
