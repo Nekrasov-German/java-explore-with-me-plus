@@ -121,4 +121,11 @@ public class EventMapper {
                 .views(views)
                 .build();
     }
+
+    public static Long extractIdFromUri(String uri) {
+        String[] parts = uri.split("/");
+        String id = parts[parts.length - 1];
+
+        return Long.parseLong(id);
+    }
 }

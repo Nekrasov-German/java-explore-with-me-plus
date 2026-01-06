@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.dto.response.HitsCounterResponseDto;
-import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CompilationRepository;
 import ru.practicum.service.dto.CompilationDto;
 import ru.practicum.service.dto.Constant;
@@ -19,11 +18,14 @@ import ru.practicum.service.mapper.CompilationMapper;
 import ru.practicum.service.mapper.EventMapper;
 import ru.practicum.service.model.Compilation;
 import ru.practicum.service.model.Event;
-import ru.practicum.service.public_ewm.mapper.PublicEventMapper;
+import ru.practicum.service.statistics.StatisticsService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +36,6 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
     final CompilationRepository compilationRepository;
     final StatClient statClient;
     final StatisticsService statisticsService;
-    private final String URI_EVENT_ENDPOINT = "/events/";
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size, HttpServletRequest request) {
@@ -51,7 +52,7 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
 
         Map<Long, Long> eventViews = stats.stream()
                 .collect(Collectors.toMap(
-                        dto -> PublicEventMapper.extractIdFromUri(dto.getUri()),
+                        dto -> EventMapper.extractIdFromUri(dto.getUri()),
                         HitsCounterResponseDto::getHits)
                 );
 
@@ -81,7 +82,7 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException(String.format("Подборка с id: %d не найдена", compId)));
 
-        Set<EventShortDto> eventShortDtoList = getEventShortDto(compilation.getEvents());
+        Set<EventShortDto> eventShortDtoList = statisticsService.getEventShortDto(compilation.getEvents(), false);
 
         statClient.hit(new StatHitRequestDto(Constant.SERVICE_POSTFIX,
                 request.getRequestURI(),
@@ -90,20 +91,5 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
         );
 
         return CompilationMapper.toCompilationDto(compilation, eventShortDtoList);
-    }
-
-    private Set<EventShortDto> getEventShortDto(Set<Event> events) {
-        List<String> uris = events.stream()
-                .map(event -> URI_EVENT_ENDPOINT + event.getId())
-                .toList();
-
-        Map<String, Long> eventIdEventHits = statisticsService.getViewsByUris(uris, false);
-
-        return events.stream()
-                .map(event -> {
-                    Long views = eventIdEventHits.getOrDefault(URI_EVENT_ENDPOINT + event.getId(), 0L);
-                    return EventMapper.toEventShortDto(event, views);
-                })
-                .collect(Collectors.toSet());
     }
 }
