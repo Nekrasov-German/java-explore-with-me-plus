@@ -24,14 +24,17 @@ public class User {
 
     @OneToMany(mappedBy = "initiator", fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Builder.Default
     private Set<Event> events = new HashSet<>();
 
     @OneToMany(mappedBy = "requester",  fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Builder.Default
     private Set<Request> requests = new HashSet<>();
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Builder.Default
     private Set<Comment> comments = new HashSet<>();
 
     @Override
