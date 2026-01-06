@@ -45,7 +45,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
             if (events.size() != dto.getEventsIds().size()) {
                 throw new NotFoundException("Некоторые события не были найдены.");
             }
-            eventShortDtos = getEventShortDto(events);
+            eventShortDtos = statisticsService.getEventShortDto(events, false);
             compilation.setEvents(events);
         }
 
@@ -96,24 +96,9 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         Compilation savedCompilation = compilationRepository.save(compilation);
 
         Set<EventShortDto> eventShortDtos = events != null && !events.isEmpty()
-                ? getEventShortDto(events)
+                ? statisticsService.getEventShortDto(events, false)
                 : Collections.emptySet();
 
         return CompilationMapper.toCompilationDto(savedCompilation, eventShortDtos);
-    }
-
-    private Set<EventShortDto> getEventShortDto(Set<Event> events) {
-        List<String> uris = events.stream()
-                .map(event -> URI_EVENT_ENDPOINT + event.getId())
-                .toList();
-
-        Map<String, Long> eventIdEventHits = statisticsService.getViewsByUris(uris, false);
-
-        return events.stream()
-                .map(event -> {
-                    Long views = eventIdEventHits.getOrDefault(URI_EVENT_ENDPOINT + event.getId(), 0L);
-                    return EventMapper.toEventShortDto(event, views);
-                })
-                .collect(Collectors.toSet());
     }
 }
