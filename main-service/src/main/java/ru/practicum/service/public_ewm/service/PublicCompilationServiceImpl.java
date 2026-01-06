@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.dto.response.HitsCounterResponseDto;
-import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CompilationRepository;
 import ru.practicum.service.dto.CompilationDto;
 import ru.practicum.service.dto.Constant;
@@ -19,11 +18,14 @@ import ru.practicum.service.mapper.CompilationMapper;
 import ru.practicum.service.mapper.EventMapper;
 import ru.practicum.service.model.Compilation;
 import ru.practicum.service.model.Event;
-import ru.practicum.service.public_ewm.mapper.PublicEventMapper;
+import ru.practicum.service.statistics.StatisticsService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +53,7 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
 
         Map<Long, Long> eventViews = stats.stream()
                 .collect(Collectors.toMap(
-                        dto -> PublicEventMapper.extractIdFromUri(dto.getUri()),
+                        dto -> EventMapper.extractIdFromUri(dto.getUri()),
                         HitsCounterResponseDto::getHits)
                 );
 

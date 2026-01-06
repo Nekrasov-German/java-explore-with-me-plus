@@ -5,11 +5,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.request.StatHitRequestDto;
@@ -22,7 +19,6 @@ import ru.practicum.service.dto.EventSort;
 import ru.practicum.service.error.NotFoundException;
 import ru.practicum.service.mapper.EventMapper;
 import ru.practicum.service.model.Event;
-import ru.practicum.service.public_ewm.mapper.PublicEventMapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -66,7 +62,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         log.info("PublicEventService: {}", hitsCounterList);
         Map<Long, Long> eventIdEventHits =  hitsCounterList.stream()
                 .collect(Collectors.toMap(hitsCounter ->
-                        PublicEventMapper.extractIdFromUri(hitsCounter.getUri()), HitsCounterResponseDto::getHits));
+                        EventMapper.extractIdFromUri(hitsCounter.getUri()), HitsCounterResponseDto::getHits));
 
         List<EventShortDto> result = eventsList.stream()
                 .map(event -> EventMapper.toEventShortDto(event, eventIdEventHits.getOrDefault(event.getId(), 0L)))
