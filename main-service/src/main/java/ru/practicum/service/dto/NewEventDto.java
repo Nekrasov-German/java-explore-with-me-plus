@@ -32,12 +32,12 @@ public class NewEventDto {
     @JsonProperty(value = "location")
     LocationDto locationDto;
 
-    Boolean paid;
+    Boolean paid = false;
 
     @Min(0)
-    Integer participantLimit;
+    Integer participantLimit = 0;
 
-    Boolean requestModeration;
+    Boolean requestModeration = true;
 
     @NotBlank
     @Size(min = 3, max = 120, message = "Заголовок должен быть от 3 до 120 символов.")

@@ -7,9 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.client.StatClient;
 import ru.practicum.dto.response.HitsCounterResponseDto;
-import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CategoryRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dal.RequestRepository;
@@ -26,6 +26,7 @@ import ru.practicum.service.model.Request;
 import ru.practicum.service.model.User;
 import ru.practicum.service.model.enums.State;
 import ru.practicum.service.model.enums.Status;
+import ru.practicum.service.statistics.StatisticsService;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -76,6 +77,7 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
+    @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException("Время события должно быть за два часа до события.");
@@ -110,6 +112,7 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Такого события не найдено."));
@@ -140,10 +143,15 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult updateStatusRequest(Long userId, Long eventId,
                                                               EventRequestStatusUpdateRequest updateRequest) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Такого события не найдено."));
+
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new ConflictException("Только владелец может обновить статус запроса");
+        }
 
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             throw new ConflictException("Подтверждение заявок не требуется");
@@ -151,86 +159,86 @@ public class PrivateServiceImpl implements PrivateService {
 
         List<Long> userIds = updateRequest.getRequestIds();
         Status status = updateRequest.getStatus();
+
+        List<Request> requests = requestRepository.findAllById(userIds);
+
+        for (Request request : requests) {
+            if (request.getStatus() != Status.PENDING) {
+                throw new ConflictException("Статус заявки ID=" + request.getId() +
+                        " нельзя изменить: текущий статус — " + request.getStatus());
+            }
+        }
+
+        Map<Long, Request> requestMap = requests.stream()
+                .collect(Collectors.toMap(Request::getId, request -> request));
+
+        List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
+        List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
+
         if (status.equals(Status.CONFIRMED)) {
             long confirmed = event.getConfirmedRequests();
             long limit = event.getParticipantLimit();
-            long availableSlots = limit - confirmed; // свободные места
 
-            List<Request> requests = requestRepository.findAllById(userIds);
+            if (limit > 0 && confirmed >= limit) {
+                throw new ConflictException("Достигнут лимит участников события");
+            }
 
-            Map<Long, Request> requestMap = requests.stream()
-                    .collect(Collectors.toMap(Request::getId, request -> request));
+            long availableSlots = (limit == 0) ? requests.size() : limit - confirmed;
 
-            List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
-            List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
+            if (availableSlots <= 0) {
+                for (Long id : userIds) {
+                    Request request = requestMap.get(id);
+                    if (request != null) {
+                        request.setStatus(Status.REJECTED);
+                        rejectedRequests.add(RequestMapper.toRequestDto(request));
+                    }
+                }
+            } else {
+                int confirmedCount = 0;
 
-            for (int i = 0; i < userIds.size(); i++) {
-                Long requestId = userIds.get(i);
+                for (Long id : userIds) {
+                    Request request = requestMap.get(id);
+                    if (request == null) continue;
+
+                    if (confirmedCount < availableSlots) {
+                        request.setStatus(Status.CONFIRMED);
+                        confirmedRequests.add(RequestMapper.toRequestDto(request));
+                        confirmedCount++;
+                    } else {
+                        request.setStatus(Status.REJECTED);
+                        rejectedRequests.add(RequestMapper.toRequestDto(request));
+                    }
+                }
+
+                event.setConfirmedRequests(confirmed + confirmedCount);
+
+            }
+
+        } else if (status.equals(Status.REJECTED)) {
+
+            for (Long requestId : userIds) {
                 Request request = requestMap.get(requestId);
 
-                if (request == null) {
-                    continue; // пропускаем несуществующие заявки
-                }
-
-                if (request.getStatus() != Status.PENDING) {
-                    throw new ConflictException("Статус заявки ID=" + requestId + " нельзя изменить: текущий статус — " +
-                            request.getStatus());
-                }
-
-                if (i < availableSlots) {
-                    // Подтверждаем первые `availableSlots` заявок
-                    request.setStatus(Status.CONFIRMED);
-                    confirmedRequests.add(RequestMapper.toRequestDto(request));
-                } else {
-                    // Отклоняем остальные
+                if (request != null) {
                     request.setStatus(Status.REJECTED);
                     rejectedRequests.add(RequestMapper.toRequestDto(request));
                 }
             }
 
-            requestRepository.saveAll(requests);
-
-            event.setConfirmedRequests(confirmed + confirmedRequests.size());
-            eventRepository.save(event);
-
-            return EventRequestStatusUpdateResult.builder()
-                    .confirmedRequests(confirmedRequests)
-                    .rejectedRequests(rejectedRequests)
-                    .build();
-        } else if (status.equals(Status.REJECTED)) {
-
-            List<Request> requests = requestRepository.findAllById(userIds);
-            Map<Long, Request> requestMap = requests.stream()
-                    .collect(Collectors.toMap(Request::getId, request -> request));
-
-            List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
-
-            for (Long requestId : userIds) {
-                Request request = requestMap.get(requestId);
-
-                if (request == null) {
-                    continue;
-                }
-
-                if (request.getStatus() != Status.PENDING) {
-                    throw new ConflictException("Статус заявки ID=" + requestId
-                            + " нельзя изменить: текущий статус — " + request.getStatus());
-                }
-
-                request.setStatus(Status.REJECTED);
-                rejectedRequests.add(RequestMapper.toRequestDto(request));
-            }
-
-            requestRepository.saveAll(requests);
-
-            return EventRequestStatusUpdateResult.builder()
-                    .confirmedRequests(new ArrayList<>())
-                    .rejectedRequests(rejectedRequests)
-                    .build();
-
         } else {
             throw new ConflictException("Недопустимый статус для обновления: " + status);
         }
+
+        requestRepository.saveAll(requests);
+
+        if(!confirmedRequests.isEmpty()) {
+            eventRepository.save(event);
+        }
+
+        return EventRequestStatusUpdateResult.builder()
+                .confirmedRequests(confirmedRequests)
+                .rejectedRequests(rejectedRequests)
+                .build();
     }
 
     @Override
@@ -243,6 +251,7 @@ public class PrivateServiceImpl implements PrivateService {
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto createRequestForParticipation(Long userId, Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Событие не найдено"));
@@ -257,13 +266,9 @@ public class PrivateServiceImpl implements PrivateService {
         }
 
         long confirmedRequest = event.getConfirmedRequests();
-        if (event.getParticipantLimit() != 0 && event.getParticipantLimit() == confirmedRequest) {
+        if (event.getParticipantLimit() != 0 && event.getParticipantLimit() <= confirmedRequest) {
             throw new ConflictException("у события достигнут лимит запросов на участие");
         }
-
-        System.out.println("TEST:");
-        System.out.println(event.getParticipantLimit());
-        System.out.println(confirmedRequest);
 
         Optional<Request> existingRequest = requestRepository.findByEventAndRequester(event, user);
         if (existingRequest.isPresent()) {
@@ -277,12 +282,15 @@ public class PrivateServiceImpl implements PrivateService {
 
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             request.setStatus(Status.CONFIRMED);
+            event.setConfirmedRequests(confirmedRequest + 1);
+            eventRepository.save(event);
         }
 
         return RequestMapper.toRequestDto(requestRepository.save(request));
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto canceledRequestForParticipation(Long userId, Long requestId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
