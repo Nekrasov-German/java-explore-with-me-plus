@@ -3,9 +3,11 @@ package ru.practicum.stats.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.request.StatHitRequestDto;
 import ru.practicum.dto.response.HitsCounterResponseDto;
+import ru.practicum.stats.error.ValidationException;
 import ru.practicum.stats.service.StatsService;
 
 import java.time.LocalDateTime;
@@ -35,6 +37,10 @@ public class StatsController {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime startDate = LocalDateTime.parse(start, dtf);
         LocalDateTime endDate = LocalDateTime.parse(end, dtf);
+
+        if (startDate.isAfter(endDate)) {
+            throw new ValidationException("Start date must be before end date");
+        }
 
         List<HitsCounterResponseDto> stats = statsService.getStats(startDate, endDate, uris, unique);
 
