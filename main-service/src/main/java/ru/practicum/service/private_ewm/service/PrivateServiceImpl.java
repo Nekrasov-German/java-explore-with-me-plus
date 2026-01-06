@@ -231,7 +231,7 @@ public class PrivateServiceImpl implements PrivateService {
 
         requestRepository.saveAll(requests);
 
-        if(!confirmedRequests.isEmpty()) {
+        if (!confirmedRequests.isEmpty()) {
             eventRepository.save(event);
         }
 

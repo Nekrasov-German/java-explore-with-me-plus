@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class AdminUserServiceImpl implements AdminUserService {
     private final UserRepository repository;
 
@@ -29,7 +29,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         Page<User> users;
 
-        if (ids==null || ids.isEmpty()) {
+        if (ids == null || ids.isEmpty()) {
             users = repository.findAll(pageable);
         } else {
             users = repository.findByIdIn(ids, pageable);

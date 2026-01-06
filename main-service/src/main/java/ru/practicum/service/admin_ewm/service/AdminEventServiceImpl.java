@@ -33,7 +33,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final CategoryRepository categoryRepository;
     private final StatisticsService  statisticsService;
 
-    private final String URI_EVENT_ENDPOINT = "/events/";
+    private final static String URI_EVENT_ENDPOINT = "/events/";
 
     @Override
     public List<EventFullDto> getFullEvents(AdminEventParam params) {

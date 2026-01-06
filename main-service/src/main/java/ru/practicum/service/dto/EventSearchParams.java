@@ -1,7 +1,6 @@
 package ru.practicum.service.dto;
 
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Data;

@@ -17,7 +17,6 @@ import ru.practicum.service.error.NotFoundException;
 import ru.practicum.service.mapper.CompilationMapper;
 import ru.practicum.service.mapper.EventMapper;
 import ru.practicum.service.model.Compilation;
-import ru.practicum.service.model.Event;
 import ru.practicum.service.statistics.StatisticsService;
 
 import java.time.LocalDateTime;

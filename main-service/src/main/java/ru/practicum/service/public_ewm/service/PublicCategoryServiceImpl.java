@@ -28,7 +28,6 @@ import java.util.List;
 public class PublicCategoryServiceImpl implements PublicCategoryService {
     final CategoryRepository categoryRepository;
     final StatClient statClient;
-    final String URI_CATEGORY_ENDPOINT = "/category";
 
     @Override
     public List<CategoryDto> getCategories(Integer from, Integer size, HttpServletRequest request) {

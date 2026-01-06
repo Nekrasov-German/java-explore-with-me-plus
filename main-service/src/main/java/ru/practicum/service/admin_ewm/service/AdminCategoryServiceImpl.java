@@ -42,8 +42,8 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public void deleteCategory(Long catId) {
         log.info("Попытка удаления категории с id={}", catId);
 
-        Category category = repository.findById(catId).
-                orElseThrow(() -> {
+        Category category = repository.findById(catId)
+                .orElseThrow(() -> {
                     log.error("Категория с id={} не найдена", catId);
                     return new NotFoundException("Категория с id=" + catId + " не найдена");
                 });
@@ -65,8 +65,8 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public CategoryDto updateCategory(Long catId, CategoryDto dto) {
         log.info("Попытка обновления категории с id={}. Новое название: {}", catId, dto.getName());
 
-        Category category = repository.findById(catId).
-                orElseThrow(() -> {
+        Category category = repository.findById(catId)
+                .orElseThrow(() -> {
                     log.error("Категория с id={} не найдена для обновления", catId);
                     return new NotFoundException("Категория с id=" + catId + " не найдена для обновления");
                 });

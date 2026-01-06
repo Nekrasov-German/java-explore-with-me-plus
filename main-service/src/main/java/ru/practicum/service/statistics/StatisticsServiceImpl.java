@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class StatisticsServiceImpl implements StatisticsService {
     private final StatClient statClient;
 
-    private final String URI_EVENT_ENDPOINT = "/events/";
+    private static final String URI_EVENT_ENDPOINT = "/events/";
 
 
     @Override

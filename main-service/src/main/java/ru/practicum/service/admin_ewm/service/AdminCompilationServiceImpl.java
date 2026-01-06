@@ -3,7 +3,6 @@ package ru.practicum.service.admin_ewm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.service.statistics.StatisticsService;
 import ru.practicum.service.dal.CompilationRepository;
 import ru.practicum.service.dal.EventRepository;
 import ru.practicum.service.dto.CompilationDto;
@@ -13,12 +12,13 @@ import ru.practicum.service.dto.UpdateCompilationRequest;
 import ru.practicum.service.error.ConflictException;
 import ru.practicum.service.error.NotFoundException;
 import ru.practicum.service.mapper.CompilationMapper;
-import ru.practicum.service.mapper.EventMapper;
 import ru.practicum.service.model.Compilation;
 import ru.practicum.service.model.Event;
+import ru.practicum.service.statistics.StatisticsService;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +27,6 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
     private final StatisticsService  statisticsService;
-
-    private final String URI_EVENT_ENDPOINT = "/events/";
 
     @Override
     public CompilationDto createCompilation(NewCompilationDto dto) {
