@@ -25,28 +25,6 @@ import java.util.List;
 public class PublicEventController {
     final PublicEventService publicEventService;
 
-//    @GetMapping
-//    public List<EventShortDto> getEvents(@RequestParam(value = "text", required = false) String text,
-//                                         @RequestParam(value = "categories", required = false) List<Long> categories,
-//                                         @RequestParam(value = "paid", required = false) Boolean paid,
-//                                         @RequestParam(value = "rangeStart", required = false)
-//                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-//                                         @RequestParam(value = "rangeEnd", required = false)
-//                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-//                                         @RequestParam(value = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
-//                                         @RequestParam(value = "sort", required = false) EventSort sort,
-//                                         @RequestParam(value = "from", defaultValue = "0") Integer from,
-//                                         @RequestParam(value = "size", defaultValue = "10") Integer size,
-//                                         HttpServletRequest request) {
-//        log.info("PublicEventController: вызов эндпоинта GET events/ " +
-//                        "с параметрами запроса --  " +
-//                        "text:{}, categories:{}, paid:{}, rangeStart:{}, rangeEnd:{}, onlyAvailable:{}, sort:{}, from:{}, size:{}",
-//                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
-//
-//        return publicEventService.getEvents(text, categories, paid, rangeStart, rangeEnd,
-//                onlyAvailable, sort, from, size, request);
-//    }
-
     @GetMapping
     public List<EventShortDto> getEvents(@Valid EventSearchParams params,
                                          HttpServletRequest request) {
